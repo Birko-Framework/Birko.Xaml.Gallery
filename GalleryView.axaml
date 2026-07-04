@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Birko.Xaml.Gallery.GalleryView"
+             FontFamily="{DynamicResource BFont}"
+             Background="{DynamicResource BBgSecondaryBrush}">
+  <ScrollViewer>
+    <StackPanel Margin="24" Spacing="16">
+
+      <TextBlock Text="Birko.Xaml — Tier 0 gallery"
+                 FontSize="24" FontWeight="Bold"
+                 Foreground="{DynamicResource BTextBrush}" />
+
+      <TextBlock Text="Switch theme — every control below re-themes live:"
+                 Foreground="{DynamicResource BTextSecondaryBrush}" />
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="Light" Tag="light" Click="OnTheme" />
+        <Button Content="Dark" Tag="dark" Click="OnTheme" />
+        <Button Content="Neon" Tag="neon" Click="OnTheme" />
+        <Button Content="Finstat" Tag="finstat" Click="OnTheme" />
+      </StackPanel>
+
+      <ContentControl Theme="{StaticResource BCard}">
+        <StackPanel Spacing="14">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="Card surface" FontSize="16" FontWeight="SemiBold"
+                       Foreground="{DynamicResource BTextBrush}" VerticalAlignment="Center" />
+            <ContentControl Theme="{StaticResource BBadge}" Content="NEW" FontSize="12" />
+            <ContentControl Theme="{StaticResource BTag}" Content="draft" FontSize="12" />
+          </StackPanel>
+
+          <TextBlock TextWrapping="Wrap"
+                     Foreground="{DynamicResource BTextSecondaryBrush}"
+                     Text="Colors, corner radius and typography all come from design tokens shared with Birko.Web." />
+
+          <TextBox Text="Editable input" Width="280" HorizontalAlignment="Left" />
+
+          <ComboBox Width="280" HorizontalAlignment="Left" SelectedIndex="0">
+            <ComboBoxItem Content="First option" />
+            <ComboBoxItem Content="Second option" />
+            <ComboBoxItem Content="Third option" />
+          </ComboBox>
+
+          <StackPanel Orientation="Horizontal" Spacing="20">
+            <CheckBox Content="Checkbox" IsChecked="True" />
+            <RadioButton Content="Option A" IsChecked="True" GroupName="g" />
+            <RadioButton Content="Option B" GroupName="g" />
+          </StackPanel>
+
+          <ProgressBar Value="60" Maximum="100" />
+
+          <TabControl>
+            <TabItem Header="Details">
+              <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource BTextSecondaryBrush}"
+                         Text="Tab content one." />
+            </TabItem>
+            <TabItem Header="History">
+              <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource BTextSecondaryBrush}"
+                         Text="Tab content two." />
+            </TabItem>
+          </TabControl>
+
+          <Button Content="Primary action" HorizontalAlignment="Left"
+                  ToolTip.Tip="A themed tooltip" />
+        </StackPanel>
+      </ContentControl>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>
