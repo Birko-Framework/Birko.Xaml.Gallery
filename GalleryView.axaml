@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:Birko.Xaml.Avalonia.Controls;assembly=Birko.Xaml.Avalonia"
              x:Class="Birko.Xaml.Gallery.GalleryView"
              FontFamily="{DynamicResource BFont}"
              Background="{DynamicResource BBgSecondaryBrush}">
@@ -63,6 +64,12 @@
           <Button Content="Primary action" HorizontalAlignment="Left"
                   ToolTip.Tip="A themed tooltip" />
         </StackPanel>
+      </ContentControl>
+
+      <TextBlock Text="Schema-driven form" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
+      <ContentControl Theme="{StaticResource BCard}">
+        <c:Form x:Name="DemoForm" />
       </ContentControl>
 
     </StackPanel>
