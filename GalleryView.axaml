@@ -50,6 +50,22 @@
 
           <ProgressBar Value="60" Maximum="100" />
 
+          <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
+            <ToggleSwitch Content="Notifications" IsChecked="True" />
+            <c:BusySpinner />
+            <Button Content="Actions ▾">
+              <Button.Flyout>
+                <MenuFlyout>
+                  <MenuItem Header="Edit" />
+                  <MenuItem Header="Duplicate" />
+                  <MenuItem Header="Delete" />
+                </MenuFlyout>
+              </Button.Flyout>
+            </Button>
+          </StackPanel>
+
+          <c:Breadcrumb x:Name="DemoCrumb" />
+
           <TabControl>
             <TabItem Header="Details">
               <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource BTextSecondaryBrush}"

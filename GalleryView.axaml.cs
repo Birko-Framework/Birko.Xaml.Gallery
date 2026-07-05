@@ -34,6 +34,8 @@ public partial class GalleryView : UserControl
                 Options = new object[] { "Free", "Pro", "Enterprise" } },
         };
         form.Model = new DemoContact();
+
+        this.FindControl<Breadcrumb>("DemoCrumb")!.ItemsSource = new[] { "Home", "Contacts", "Ada Lovelace" };
     }
 
     private void OnTheme(object? sender, RoutedEventArgs e)
