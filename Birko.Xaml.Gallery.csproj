@@ -20,9 +20,11 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
   </ItemGroup>
 
+  <!-- Consumer app: references the framework assemblies across the bucket boundary
+       (Birko/Consumers -> Birko/Framework), mirroring how Birko.Web.Playground consumes Birko.Web. -->
   <ItemGroup>
-    <ProjectReference Include="..\Birko.Xaml.Core\Birko.Xaml.Core.csproj" />
-    <ProjectReference Include="..\Birko.Xaml.Avalonia\Birko.Xaml.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Framework\Birko.Xaml.Core\Birko.Xaml.Core.csproj" />
+    <ProjectReference Include="..\..\Framework\Birko.Xaml.Avalonia\Birko.Xaml.Avalonia.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,8 +16,10 @@ Runnable Avalonia gallery — the STORY-031 validation gate for EPIC-015. See `R
 
 ## Conventions / gotchas
 
-- Real Avalonia `net8.0` `WinExe` (Avalonia 11.2.3) — the EPIC-015 convention break. Registered in
-  `.slnx` (`/Xaml/`) + `.code-workspace`; not in the aggregator.
+- **Consumer app in `Birko/Consumers/`** (mirrors `Birko.Web.Playground`), not a framework project:
+  references `Birko.Xaml.*` via `ProjectReference` to `../../Framework/...`, is **not** in
+  `Birko.Framework.slnx`/`.code-workspace`, and the framework tests don't depend on it. Real Avalonia
+  `net8.0` `WinExe` (Avalonia 11.2.3). Run/validate standalone with `dotnet run`.
 - `Application.Resources` needs a `ResourceDictionary` + `MergedDictionaries` wrapper around a
   `ResourceInclude` (a bare `ResourceInclude` there fails to compile).
 - When adding controls here, prefer ones already restyled in `Birko.Xaml.Avalonia/Controls`. As

@@ -34,7 +34,11 @@ BIRKO_SHOTS=./shots dotnet test ../../Framework.Tests/Birko.Xaml.Avalonia.Tests
 All four themes render distinctly and correctly; the token pipeline delivers parity and live swap.
 Tier-1 (STORY-034, the full restyled-control sweep) is cleared to proceed.
 
-## Convention note
+## Where it lives
 
-Real Avalonia `net8.0` desktop app (`Avalonia.Desktop`) — a dev artifact kept in the framework
-workspace. Registered in `Birko.Framework.slnx` (`/Xaml/`) + `.code-workspace`; not in the aggregator.
+A **consumer app** in `Birko/Consumers/` (mirroring `Birko.Web.Playground`) — it *consumes* the
+`Birko.Xaml.*` framework assemblies via `ProjectReference` across the bucket boundary
+(`../../Framework/...`). It is deliberately **not** in `Birko.Framework.slnx` or the framework
+`.code-workspace`, and the framework test suite does not depend on it: like the Web playground, the
+gallery is a standalone demo/validation surface you run directly (`dotnet run`), not part of the
+shipped framework.
