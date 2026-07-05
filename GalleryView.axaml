@@ -89,6 +89,22 @@
         <c:Form x:Name="DemoForm" />
       </ContentControl>
 
+      <TextBlock Text="Tree menu" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
+      <ContentControl Theme="{StaticResource BCard}">
+        <TreeView>
+          <TreeViewItem Header="Reports" IsExpanded="True">
+            <TreeViewItem Header="Sales" />
+            <TreeViewItem Header="Inventory" />
+          </TreeViewItem>
+          <TreeViewItem Header="Customers" IsExpanded="True">
+            <TreeViewItem Header="Companies" />
+            <TreeViewItem Header="Contacts" />
+          </TreeViewItem>
+          <TreeViewItem Header="Settings" />
+        </TreeView>
+      </ContentControl>
+
       <TextBlock Text="Data grid" FontWeight="SemiBold"
                  Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
       <ContentControl Theme="{StaticResource BCard}" Padding="0">
