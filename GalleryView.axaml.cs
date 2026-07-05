@@ -36,6 +36,13 @@ public partial class GalleryView : UserControl
         form.Model = new DemoContact();
 
         this.FindControl<Breadcrumb>("DemoCrumb")!.ItemsSource = new[] { "Home", "Contacts", "Ada Lovelace" };
+
+        this.FindControl<DataGrid>("DemoGrid")!.ItemsSource = new[]
+        {
+            new DemoContact { FullName = "Ada Lovelace", Email = "ada@example.com", Plan = "Pro" },
+            new DemoContact { FullName = "Grace Hopper", Email = "grace@example.com", Plan = "Enterprise" },
+            new DemoContact { FullName = "Linus Torvalds", Email = "linus@example.com", Plan = "Free" },
+        };
     }
 
     private void OnTheme(object? sender, RoutedEventArgs e)

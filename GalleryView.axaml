@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:Birko.Xaml.Avalonia.Controls;assembly=Birko.Xaml.Avalonia"
              x:Class="Birko.Xaml.Gallery.GalleryView"
+             x:CompileBindings="False"
              FontFamily="{DynamicResource BFont}"
              Background="{DynamicResource BBgSecondaryBrush}">
   <ScrollViewer>
@@ -86,6 +87,19 @@
                  Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
       <ContentControl Theme="{StaticResource BCard}">
         <c:Form x:Name="DemoForm" />
+      </ContentControl>
+
+      <TextBlock Text="Data grid" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
+      <ContentControl Theme="{StaticResource BCard}" Padding="0">
+        <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150"
+                  IsReadOnly="True" GridLinesVisibility="Horizontal">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*" />
+            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
+            <DataGridTextColumn Header="Plan" Binding="{Binding Plan}" Width="Auto" />
+          </DataGrid.Columns>
+        </DataGrid>
       </ContentControl>
 
     </StackPanel>

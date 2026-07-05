@@ -4,6 +4,7 @@
              RequestedThemeVariant="Light">
   <Application.Styles>
     <FluentTheme />
+    <StyleInclude Source="avares://Birko.Xaml.Avalonia/Controls/DataGridStyles.axaml" />
   </Application.Styles>
   <Application.Resources>
     <!-- Birko design tokens + restyled ControlThemes, layered over Fluent. -->
