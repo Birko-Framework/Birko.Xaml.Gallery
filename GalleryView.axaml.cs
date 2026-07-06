@@ -8,6 +8,7 @@ using Birko.Xaml.Core.Charts;
 using Birko.Xaml.Core.Commands;
 using Birko.Xaml.Core.Forms;
 using Birko.Xaml.Core.Kanban;
+using Birko.Xaml.Core.Ribbon;
 using Birko.Xaml.Core.Theming;
 
 namespace Birko.Xaml.Gallery;
@@ -30,6 +31,7 @@ public partial class GalleryView : UserControl
         PopulateForms();
         PopulateViewers();
         PopulateComposites();
+        PopulateChrome();
         PopulateOverlays();
     }
 
@@ -111,6 +113,23 @@ public partial class GalleryView : UserControl
         {
             new ChartSeries { Name = "Revenue", Values = new double[] { 12, 18, 15, 24, 30 } },
             new ChartSeries { Name = "Costs", Values = new double[] { 8, 10, 9, 12, 14 } },
+        };
+    }
+
+    private void PopulateChrome()
+    {
+        RibbonItem I(string label, string icon) => new() { Id = label, Label = label, Icon = icon };
+        this.FindControl<Ribbon>("DemoRibbon")!.Tabs = new[]
+        {
+            new RibbonTab { Id = "home", Label = "Home", Groups = new[]
+            {
+                new RibbonGroup { Label = "Clipboard", Items = new[] { I("Paste", "\U0001F4CB"), I("Cut", "✂"), I("Copy", "\U0001F5D0") } },
+                new RibbonGroup { Label = "Records", Items = new[] { I("New", "➕"), I("Delete", "\U0001F5D1") } },
+            }},
+            new RibbonTab { Id = "view", Label = "View", Groups = new[]
+            {
+                new RibbonGroup { Label = "Zoom", Items = new[] { I("Zoom In", "\U0001F50D"), I("Reset", "↺") } },
+            }},
         };
     }
 

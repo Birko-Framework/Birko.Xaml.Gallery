@@ -132,6 +132,22 @@
           </ScrollViewer>
         </TabItem>
 
+        <!-- ── Chrome ───────────────────────────────────────────────── -->
+        <TabItem Header="Chrome">
+          <ScrollViewer>
+            <StackPanel Spacing="12" Margin="0,12,0,0">
+              <TextBlock Text="Ribbon (BAppShell chrome)" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BTextBrush}" />
+              <Border BorderThickness="1" BorderBrush="{DynamicResource BBorderBrush}"
+                      CornerRadius="{DynamicResource BRadius}">
+                <c:Ribbon x:Name="DemoRibbon" />
+              </Border>
+              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
+                         Text="The shell ships two chrome styles: a sidebar (ShellView) and this ribbon (RibbonShellView), both over the same ShellViewModel. Run a shell app to see them full-size; here is the ribbon control on its own." />
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
         <!-- ── Overlays ─────────────────────────────────────────────── -->
         <TabItem Header="Overlays">
           <StackPanel Spacing="12" Margin="0,12,0,0">
