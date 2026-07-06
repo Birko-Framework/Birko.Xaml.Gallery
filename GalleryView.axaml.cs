@@ -25,6 +25,10 @@ public sealed class DemoContact
     public bool Subscribed { get; set; } = true;
     public string? Plan { get; set; } = "Pro";
     public double Age { get; set; } = 36;
+    public DateTime? BirthDate { get; set; } = new DateTime(1990, 5, 20);
+    public TimeSpan? PreferredTime { get; set; } = new TimeSpan(9, 0, 0);
+    public DateTime? Appointment { get; set; }
+    public Birko.Xaml.Core.Forms.DateRange? Vacation { get; set; }
 
     public override string ToString() => FullName ?? "(unnamed)";
 }
@@ -88,6 +92,10 @@ public partial class GalleryView : UserControl
             new FormField { Name = nameof(DemoContact.Plan), Label = "Plan", Type = FieldType.Radio,
                 Options = new object[] { "Free", "Pro", "Enterprise" } },
             new FormField { Name = nameof(DemoContact.Age), Label = "Age", Type = FieldType.Number, Min = 0, Max = 120, Hint = "0–120" },
+            new FormField { Name = nameof(DemoContact.BirthDate), Label = "Birth date", Type = FieldType.Date },
+            new FormField { Name = nameof(DemoContact.PreferredTime), Label = "Preferred time", Type = FieldType.Time },
+            new FormField { Name = nameof(DemoContact.Appointment), Label = "Appointment", Type = FieldType.DateTime },
+            new FormField { Name = nameof(DemoContact.Vacation), Label = "Vacation", Type = FieldType.DateRange },
         };
         form.Model = new DemoContact();
 
