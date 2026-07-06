@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:Birko.Xaml.Avalonia.Controls;assembly=Birko.Xaml.Avalonia"
+             xmlns:sv="clr-namespace:Birko.Xaml.Shell.Views;assembly=Birko.Xaml.Shell"
              x:Class="Birko.Xaml.Gallery.GalleryView"
              x:CompileBindings="False"
              FontFamily="{DynamicResource BFont}"
@@ -159,6 +160,23 @@
               <Button Content="Command palette (Ctrl+K)" Click="OnOpenPalette" />
             </StackPanel>
           </StackPanel>
+        </TabItem>
+
+        <!-- ── Mobile shell ─────────────────────────────────────────── -->
+        <TabItem Header="Mobile shell">
+          <ScrollViewer>
+            <StackPanel Spacing="12" Margin="0,12,0,0">
+              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
+                         Text="BMobileAppShell equivalent — fixed top-bar + safe-area bottom-nav driven by the module nav-model (EPIC-016 / TASK-043). Tap a bottom-nav item to switch surfaces; the active item highlights." />
+              <!-- Phone-sized frame so the mobile chrome reads as a device inside the desktop gallery. -->
+              <Border Width="380" Height="640" HorizontalAlignment="Left"
+                      CornerRadius="24" ClipToBounds="True" BorderThickness="8"
+                      BorderBrush="{DynamicResource BBorderBrush}"
+                      Background="{DynamicResource BBgSecondaryBrush}">
+                <sv:MobileShellView x:Name="DemoMobileShell" />
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
         </TabItem>
 
       </TabControl>

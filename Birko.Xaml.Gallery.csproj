@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Birko.Xaml.Core\Birko.Xaml.Core.csproj" />
     <ProjectReference Include="..\..\Framework\Birko.Xaml.Avalonia\Birko.Xaml.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Framework\Birko.Xaml.Shell\Birko.Xaml.Shell.csproj" />
   </ItemGroup>
 
 </Project>

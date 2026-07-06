@@ -6,10 +6,14 @@ using Birko.Xaml.Avalonia.Controls;
 using Birko.Xaml.Avalonia.Theming;
 using Birko.Xaml.Core.Charts;
 using Birko.Xaml.Core.Commands;
+using Birko.Xaml.Core.Data;
 using Birko.Xaml.Core.Forms;
 using Birko.Xaml.Core.Kanban;
+using Birko.Xaml.Core.Mvvm;
+using Birko.Xaml.Core.Navigation;
 using Birko.Xaml.Core.Ribbon;
 using Birko.Xaml.Core.Theming;
+using Birko.Xaml.Shell.Views;
 
 namespace Birko.Xaml.Gallery;
 
@@ -19,6 +23,22 @@ public sealed class DemoContact
     public string? Email { get; set; } = "ada@example.com";
     public bool Subscribed { get; set; } = true;
     public string? Plan { get; set; } = "Pro";
+
+    public override string ToString() => FullName ?? "(unnamed)";
+}
+
+// In-memory data source for the mobile-shell surfaces (the port a real app adapts its store to).
+file sealed class GalleryContacts : ICrudDataSource<DemoContact>
+{
+    private readonly List<DemoContact> _items = new()
+    {
+        new() { FullName = "Ada Lovelace" }, new() { FullName = "Grace Hopper" }, new() { FullName = "Linus Torvalds" },
+    };
+    public Task<IReadOnlyList<DemoContact>> GetAllAsync(CancellationToken ct = default) => Task.FromResult<IReadOnlyList<DemoContact>>(_items);
+    public Task<DemoContact?> GetAsync(Guid id, CancellationToken ct = default) => Task.FromResult<DemoContact?>(_items.FirstOrDefault());
+    public Task<Guid> SaveAsync(DemoContact item, CancellationToken ct = default) { if (!_items.Contains(item)) _items.Add(item); return Task.FromResult(Guid.NewGuid()); }
+    public Task DeleteAsync(DemoContact item, CancellationToken ct = default) { _items.Remove(item); return Task.CompletedTask; }
+    public DemoContact NewInstance() => new() { FullName = "" };
 }
 
 public partial class GalleryView : UserControl
@@ -33,6 +53,7 @@ public partial class GalleryView : UserControl
         PopulateComposites();
         PopulateChrome();
         PopulateOverlays();
+        PopulateMobileShell();
     }
 
     // ── Theme switch ──
@@ -147,6 +168,18 @@ public partial class GalleryView : UserControl
             new CommandItem { Id = "i", Label = "Import CSV", Group = "Data" },
             new CommandItem { Id = "t", Label = "Toggle theme", Group = "App", Run = () => _themes.SetTheme("dark") },
         };
+    }
+
+    private void PopulateMobileShell()
+    {
+        var data = new GalleryContacts();
+        var nav = new NavigationService().Register(
+            new ModuleDefinition { Id = "home", Label = "Home", Icon = "🏠", CreateViewModel = () => { var vm = new ListPageViewModel<DemoContact>(data); vm.LoadAsync(); return vm; } },
+            new ModuleDefinition { Id = "log", Label = "Log", Icon = "➕", CreateViewModel = () => { var vm = new ListPageViewModel<DemoContact>(data); vm.LoadAsync(); return vm; } },
+            new ModuleDefinition { Id = "stats", Label = "Stats", Icon = "📊", CreateViewModel = () => { var vm = new ListPageViewModel<DemoContact>(data); vm.LoadAsync(); return vm; } });
+        var shell = new ShellViewModel(nav, _themes) { Title = "Reps" };
+        nav.Navigate("home");
+        this.FindControl<MobileShellView>("DemoMobileShell")!.DataContext = shell;
     }
 
     private void OnOpenModal(object? sender, RoutedEventArgs e) =>
