@@ -29,6 +29,9 @@ public sealed class DemoContact
     public TimeSpan? PreferredTime { get; set; } = new TimeSpan(9, 0, 0);
     public DateTime? Appointment { get; set; }
     public Birko.Xaml.Core.Forms.DateRange? Vacation { get; set; }
+    public System.Collections.Generic.List<string> Interests { get; set; } = new() { "Music" };
+    public System.Collections.Generic.List<string>? Keywords { get; set; } = new() { "birko", "xaml" };
+    public string? Resume { get; set; }
 
     public override string ToString() => FullName ?? "(unnamed)";
 }
@@ -96,6 +99,10 @@ public partial class GalleryView : UserControl
             new FormField { Name = nameof(DemoContact.PreferredTime), Label = "Preferred time", Type = FieldType.Time },
             new FormField { Name = nameof(DemoContact.Appointment), Label = "Appointment", Type = FieldType.DateTime },
             new FormField { Name = nameof(DemoContact.Vacation), Label = "Vacation", Type = FieldType.DateRange },
+            new FormField { Name = nameof(DemoContact.Interests), Label = "Interests", Type = FieldType.MultiSelect,
+                Options = new object[] { "Music", "Sports", "Travel", "Tech" } },
+            new FormField { Name = nameof(DemoContact.Keywords), Label = "Keywords", Type = FieldType.Tags },
+            new FormField { Name = nameof(DemoContact.Resume), Label = "Résumé", Type = FieldType.File },
         };
         form.Model = new DemoContact();
 
