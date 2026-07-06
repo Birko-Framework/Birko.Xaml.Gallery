@@ -64,6 +64,16 @@
               </StackPanel>
 
               <c:Breadcrumb x:Name="DemoCrumb" />
+
+              <!-- Slider (TASK-054): horizontal + a vertical equalizer bank -->
+              <Slider Minimum="0" Maximum="100" Value="60" Width="240" HorizontalAlignment="Left" />
+              <StackPanel Orientation="Horizontal" Spacing="16" Height="150">
+                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="30" />
+                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="55" />
+                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="80" />
+                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="45" />
+                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="65" />
+              </StackPanel>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
