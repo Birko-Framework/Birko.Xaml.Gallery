@@ -5,119 +5,165 @@
              x:CompileBindings="False"
              FontFamily="{DynamicResource BFont}"
              Background="{DynamicResource BBgSecondaryBrush}">
-  <ScrollViewer>
-    <StackPanel Margin="24" Spacing="16">
 
-      <TextBlock Text="Birko.Xaml — Tier 0 gallery"
-                 FontSize="24" FontWeight="Bold"
-                 Foreground="{DynamicResource BTextBrush}" />
+  <Panel>
+    <DockPanel Margin="20">
 
-      <TextBlock Text="Switch theme — every control below re-themes live:"
-                 Foreground="{DynamicResource BTextSecondaryBrush}" />
-
-      <StackPanel Orientation="Horizontal" Spacing="8">
-        <Button Content="Light" Tag="light" Click="OnTheme" />
-        <Button Content="Dark" Tag="dark" Click="OnTheme" />
-        <Button Content="Neon" Tag="neon" Click="OnTheme" />
-        <Button Content="Finstat" Tag="finstat" Click="OnTheme" />
+      <!-- Header: title + theme switcher -->
+      <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,12">
+        <TextBlock Text="Birko.Xaml — control gallery" FontSize="24" FontWeight="Bold"
+                   Foreground="{DynamicResource BTextBrush}" />
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Content="Light" Tag="light" Click="OnTheme" />
+          <Button Content="Dark" Tag="dark" Click="OnTheme" />
+          <Button Content="Neon" Tag="neon" Click="OnTheme" />
+          <Button Content="Finstat" Tag="finstat" Click="OnTheme" />
+        </StackPanel>
       </StackPanel>
 
-      <ContentControl Theme="{StaticResource BCard}">
-        <StackPanel Spacing="14">
-          <StackPanel Orientation="Horizontal" Spacing="8">
-            <TextBlock Text="Card surface" FontSize="16" FontWeight="SemiBold"
-                       Foreground="{DynamicResource BTextBrush}" VerticalAlignment="Center" />
-            <ContentControl Theme="{StaticResource BBadge}" Content="NEW" FontSize="12" />
-            <ContentControl Theme="{StaticResource BTag}" Content="draft" FontSize="12" />
+      <TabControl>
+
+        <!-- ── Controls ─────────────────────────────────────────────── -->
+        <TabItem Header="Controls">
+          <ScrollViewer>
+            <StackPanel Spacing="16" Margin="0,12,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Content="Primary" />
+                <Button Content="With tooltip" ToolTip.Tip="A themed tooltip" />
+                <ContentControl Theme="{StaticResource BBadge}" Content="NEW" FontSize="12" />
+                <ContentControl Theme="{StaticResource BTag}" Content="draft" FontSize="12" />
+              </StackPanel>
+
+              <TextBox Text="Editable input" Width="300" HorizontalAlignment="Left" />
+              <ComboBox Width="300" HorizontalAlignment="Left" SelectedIndex="0">
+                <ComboBoxItem Content="First option" />
+                <ComboBoxItem Content="Second option" />
+                <ComboBoxItem Content="Third option" />
+              </ComboBox>
+
+              <StackPanel Orientation="Horizontal" Spacing="20">
+                <CheckBox Content="Checkbox" IsChecked="True" />
+                <RadioButton Content="Option A" IsChecked="True" GroupName="g" />
+                <RadioButton Content="Option B" GroupName="g" />
+                <ToggleSwitch Content="Notifications" IsChecked="True" />
+              </StackPanel>
+
+              <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
+                <ProgressBar Value="60" Maximum="100" Width="200" />
+                <c:BusySpinner />
+                <Button Content="Actions ▾">
+                  <Button.Flyout>
+                    <MenuFlyout>
+                      <MenuItem Header="Edit" />
+                      <MenuItem Header="Duplicate" />
+                      <MenuItem Header="Delete" />
+                    </MenuFlyout>
+                  </Button.Flyout>
+                </Button>
+              </StackPanel>
+
+              <c:Breadcrumb x:Name="DemoCrumb" />
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- ── Forms & data ─────────────────────────────────────────── -->
+        <TabItem Header="Forms &amp; data">
+          <ScrollViewer>
+            <StackPanel Spacing="16" Margin="0,12,0,0">
+              <TextBlock Text="Schema-driven form" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}"><c:Form x:Name="DemoForm" /></ContentControl>
+
+              <TextBlock Text="Data grid" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}" Padding="0">
+                <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150" IsReadOnly="True" GridLinesVisibility="Horizontal">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*" />
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
+                    <DataGridTextColumn Header="Plan" Binding="{Binding Plan}" Width="Auto" />
+                  </DataGrid.Columns>
+                </DataGrid>
+              </ContentControl>
+
+              <TextBlock Text="Tree menu" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}">
+                <TreeView>
+                  <TreeViewItem Header="Reports" IsExpanded="True">
+                    <TreeViewItem Header="Sales" />
+                    <TreeViewItem Header="Inventory" />
+                  </TreeViewItem>
+                  <TreeViewItem Header="Customers" IsExpanded="True">
+                    <TreeViewItem Header="Companies" />
+                    <TreeViewItem Header="Contacts" />
+                  </TreeViewItem>
+                  <TreeViewItem Header="Settings" />
+                </TreeView>
+              </ContentControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- ── Viewers ──────────────────────────────────────────────── -->
+        <TabItem Header="Viewers">
+          <ScrollViewer>
+            <StackPanel Spacing="16" Margin="0,12,0,0">
+              <TextBlock Text="JSON / object viewer" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}"><c:ObjectTree x:Name="DemoJson" /></ContentControl>
+
+              <TextBlock Text="XML viewer" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}"><c:XmlViewer x:Name="DemoXml" /></ContentControl>
+
+              <TextBlock Text="Markdown editor" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}" Height="260"><c:MarkdownEditor x:Name="DemoMarkdown" /></ContentControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- ── Composites ───────────────────────────────────────────── -->
+        <TabItem Header="Composites">
+          <ScrollViewer>
+            <StackPanel Spacing="16" Margin="0,12,0,0">
+              <TextBlock Text="Kanban" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <c:Kanban x:Name="DemoKanban" Height="220" />
+
+              <TextBlock Text="Chart" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}" Height="280"><c:BChart x:Name="DemoChart" /></ContentControl>
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+
+        <!-- ── Overlays ─────────────────────────────────────────────── -->
+        <TabItem Header="Overlays">
+          <StackPanel Spacing="12" Margin="0,12,0,0">
+            <TextBlock Text="Overlays open over the whole gallery." Foreground="{DynamicResource BTextSecondaryBrush}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Content="Open modal" Click="OnOpenModal" />
+              <Button Content="New (form modal)" Click="OnOpenFormModal" />
+              <Button Content="Open drawer" Click="OnOpenDrawer" />
+              <Button Content="Command palette (Ctrl+K)" Click="OnOpenPalette" />
+            </StackPanel>
           </StackPanel>
+        </TabItem>
 
-          <TextBlock TextWrapping="Wrap"
-                     Foreground="{DynamicResource BTextSecondaryBrush}"
-                     Text="Colors, corner radius and typography all come from design tokens shared with Birko.Web." />
+      </TabControl>
+    </DockPanel>
 
-          <TextBox Text="Editable input" Width="280" HorizontalAlignment="Left" />
+    <!-- Root-level overlays -->
+    <c:Modal x:Name="DemoModal" Title="A modal dialog">
+      <TextBlock Text="Modals dim the backdrop and center a token-styled card. Click the backdrop to close."
+                 TextWrapping="Wrap" Foreground="{DynamicResource BTextBrush}" />
+    </c:Modal>
 
-          <ComboBox Width="280" HorizontalAlignment="Left" SelectedIndex="0">
-            <ComboBoxItem Content="First option" />
-            <ComboBoxItem Content="Second option" />
-            <ComboBoxItem Content="Third option" />
-          </ComboBox>
+    <c:FormModal x:Name="DemoFormModal" Title="New contact" />
 
-          <StackPanel Orientation="Horizontal" Spacing="20">
-            <CheckBox Content="Checkbox" IsChecked="True" />
-            <RadioButton Content="Option A" IsChecked="True" GroupName="g" />
-            <RadioButton Content="Option B" GroupName="g" />
-          </StackPanel>
+    <c:Drawer x:Name="DemoDrawer" Placement="Right">
+      <StackPanel Spacing="12" Width="280">
+        <TextBlock Text="Drawer" FontWeight="SemiBold" FontSize="16" Foreground="{DynamicResource BTextBrush}" />
+        <TextBlock Text="A slide-in panel anchored to the edge. Click the backdrop to dismiss."
+                   TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}" />
+      </StackPanel>
+    </c:Drawer>
 
-          <ProgressBar Value="60" Maximum="100" />
-
-          <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
-            <ToggleSwitch Content="Notifications" IsChecked="True" />
-            <c:BusySpinner />
-            <Button Content="Actions ▾">
-              <Button.Flyout>
-                <MenuFlyout>
-                  <MenuItem Header="Edit" />
-                  <MenuItem Header="Duplicate" />
-                  <MenuItem Header="Delete" />
-                </MenuFlyout>
-              </Button.Flyout>
-            </Button>
-          </StackPanel>
-
-          <c:Breadcrumb x:Name="DemoCrumb" />
-
-          <TabControl>
-            <TabItem Header="Details">
-              <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="Tab content one." />
-            </TabItem>
-            <TabItem Header="History">
-              <TextBlock Margin="0,8,0,0" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="Tab content two." />
-            </TabItem>
-          </TabControl>
-
-          <Button Content="Primary action" HorizontalAlignment="Left"
-                  ToolTip.Tip="A themed tooltip" />
-        </StackPanel>
-      </ContentControl>
-
-      <TextBlock Text="Schema-driven form" FontWeight="SemiBold"
-                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
-      <ContentControl Theme="{StaticResource BCard}">
-        <c:Form x:Name="DemoForm" />
-      </ContentControl>
-
-      <TextBlock Text="Tree menu" FontWeight="SemiBold"
-                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
-      <ContentControl Theme="{StaticResource BCard}">
-        <TreeView>
-          <TreeViewItem Header="Reports" IsExpanded="True">
-            <TreeViewItem Header="Sales" />
-            <TreeViewItem Header="Inventory" />
-          </TreeViewItem>
-          <TreeViewItem Header="Customers" IsExpanded="True">
-            <TreeViewItem Header="Companies" />
-            <TreeViewItem Header="Contacts" />
-          </TreeViewItem>
-          <TreeViewItem Header="Settings" />
-        </TreeView>
-      </ContentControl>
-
-      <TextBlock Text="Data grid" FontWeight="SemiBold"
-                 Foreground="{DynamicResource BTextBrush}" Margin="0,4,0,0" />
-      <ContentControl Theme="{StaticResource BCard}" Padding="0">
-        <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150"
-                  IsReadOnly="True" GridLinesVisibility="Horizontal">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*" />
-            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
-            <DataGridTextColumn Header="Plan" Binding="{Binding Plan}" Width="Auto" />
-          </DataGrid.Columns>
-        </DataGrid>
-      </ContentControl>
-
-    </StackPanel>
-  </ScrollViewer>
+    <c:CommandPalette x:Name="DemoPalette" />
+  </Panel>
 </UserControl>

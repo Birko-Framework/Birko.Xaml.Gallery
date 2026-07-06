@@ -14,6 +14,15 @@ Click **Light / Dark / Neon / Finstat** — the Button, TextBox, Card and Badge 
 `RequestedThemeVariant` (no restart). Colors, corner radius and typography all come from the design
 tokens shared byte-for-byte with Birko.Web.
 
+## What it shows
+
+Organized into `TabControl` sections (which also dogfoods `b-tabs`):
+- **Controls** — buttons, badge/tag, input, combobox, checkbox/radio/toggle, progress + spinner, dropdown menu, breadcrumb, tooltip.
+- **Forms & data** — schema-driven `Form`, `DataGrid`, `TreeView`.
+- **Viewers** — `ObjectTree` (JSON), `XmlViewer`, `MarkdownEditor`.
+- **Composites** — `Kanban`, `BChart` (LiveCharts2).
+- **Overlays** — buttons that open the `Modal`, `FormModal`, `Drawer`, and the `CommandPalette` (also **Ctrl+K**), hosted at the window root.
+
 ## What it validates
 
 - The generated `Tokens.axaml` + restyled `ControlThemes` (`BirkoTheme.axaml`) load and apply.

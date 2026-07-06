@@ -1,9 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Birko.Xaml.Avalonia.Controls;
 using Birko.Xaml.Avalonia.Theming;
+using Birko.Xaml.Core.Charts;
+using Birko.Xaml.Core.Commands;
 using Birko.Xaml.Core.Forms;
+using Birko.Xaml.Core.Kanban;
 using Birko.Xaml.Core.Theming;
 
 namespace Birko.Xaml.Gallery;
@@ -23,7 +27,32 @@ public partial class GalleryView : UserControl
     public GalleryView()
     {
         AvaloniaXamlLoader.Load(this);
+        PopulateForms();
+        PopulateViewers();
+        PopulateComposites();
+        PopulateOverlays();
+    }
 
+    // ── Theme switch ──
+    private void OnTheme(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button { Tag: string id })
+            _themes.SetTheme(id);
+    }
+
+    // ── Ctrl+K opens the palette ──
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        if (e.Key == Key.K && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            this.FindControl<CommandPalette>("DemoPalette")!.IsOpen = true;
+            e.Handled = true;
+        }
+    }
+
+    private void PopulateForms()
+    {
         var form = this.FindControl<Form>("DemoForm")!;
         form.Fields = new[]
         {
@@ -45,9 +74,75 @@ public partial class GalleryView : UserControl
         };
     }
 
-    private void OnTheme(object? sender, RoutedEventArgs e)
+    private void PopulateViewers()
     {
-        if (sender is Button { Tag: string id })
-            _themes.SetTheme(id);
+        this.FindControl<ObjectTree>("DemoJson")!.Json =
+            "{\"user\":{\"name\":\"Ada Lovelace\",\"age\":36,\"active\":true},"
+            + "\"roles\":[\"admin\",\"editor\"],\"lastLogin\":null}";
+
+        this.FindControl<XmlViewer>("DemoXml")!.Xml =
+            "<order id=\"1024\" status=\"open\"><customer>Ada Lovelace</customer>"
+            + "<lines><line sku=\"A-1\" qty=\"2\" /><line sku=\"B-9\" qty=\"1\" /></lines></order>";
+
+        this.FindControl<MarkdownEditor>("DemoMarkdown")!.Markdown =
+            "# Notes\n\nBirko.Xaml **Tier-2** composites.\n\n- viewers\n- kanban\n- chart\n\n"
+            + "Run with `dotnet run`.";
     }
+
+    private void PopulateComposites()
+    {
+        KanbanColumn Col(string id, string title, params string[] cards)
+        {
+            var c = new KanbanColumn { Id = id, Title = title };
+            foreach (var t in cards) c.Cards.Add(new KanbanCard { Id = t, Title = t });
+            return c;
+        }
+        this.FindControl<Kanban>("DemoKanban")!.Columns = new[]
+        {
+            Col("todo", "To Do", "Design tokens", "Theme system"),
+            Col("doing", "In Progress", "Tier-1 controls"),
+            Col("done", "Done", "Gallery", "Core VMs"),
+        };
+
+        var chart = this.FindControl<BChart>("DemoChart")!;
+        chart.Kind = ChartKind.Line;
+        chart.Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
+        chart.Series = new[]
+        {
+            new ChartSeries { Name = "Revenue", Values = new double[] { 12, 18, 15, 24, 30 } },
+            new ChartSeries { Name = "Costs", Values = new double[] { 8, 10, 9, 12, 14 } },
+        };
+    }
+
+    private void PopulateOverlays()
+    {
+        this.FindControl<FormModal>("DemoFormModal")!.Fields = new[]
+        {
+            new FormField { Name = nameof(DemoContact.FullName), Label = "Name", Required = true },
+            new FormField { Name = nameof(DemoContact.Email), Label = "Email" },
+        };
+
+        this.FindControl<CommandPalette>("DemoPalette")!.Commands = new[]
+        {
+            new CommandItem { Id = "n", Label = "New contact", Group = "Contacts" },
+            new CommandItem { Id = "i", Label = "Import CSV", Group = "Data" },
+            new CommandItem { Id = "t", Label = "Toggle theme", Group = "App", Run = () => _themes.SetTheme("dark") },
+        };
+    }
+
+    private void OnOpenModal(object? sender, RoutedEventArgs e) =>
+        this.FindControl<Modal>("DemoModal")!.IsOpen = true;
+
+    private void OnOpenFormModal(object? sender, RoutedEventArgs e)
+    {
+        var fm = this.FindControl<FormModal>("DemoFormModal")!;
+        fm.Model = new DemoContact { FullName = "", Email = "" };
+        fm.IsOpen = true;
+    }
+
+    private void OnOpenDrawer(object? sender, RoutedEventArgs e) =>
+        this.FindControl<Drawer>("DemoDrawer")!.IsOpen = true;
+
+    private void OnOpenPalette(object? sender, RoutedEventArgs e) =>
+        this.FindControl<CommandPalette>("DemoPalette")!.IsOpen = true;
 }
