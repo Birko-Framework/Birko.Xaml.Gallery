@@ -21,8 +21,10 @@ public sealed class DemoContact
 {
     public string? FullName { get; set; } = "Ada Lovelace";
     public string? Email { get; set; } = "ada@example.com";
+    public string? Password { get; set; } = "hunter2";
     public bool Subscribed { get; set; } = true;
     public string? Plan { get; set; } = "Pro";
+    public double Age { get; set; } = 36;
 
     public override string ToString() => FullName ?? "(unnamed)";
 }
@@ -79,11 +81,13 @@ public partial class GalleryView : UserControl
         var form = this.FindControl<Form>("DemoForm")!;
         form.Fields = new[]
         {
-            new FormField { Name = nameof(DemoContact.FullName), Label = "Full name", Required = true },
-            new FormField { Name = nameof(DemoContact.Email), Label = "Email", Placeholder = "you@example.com" },
-            new FormField { Name = nameof(DemoContact.Subscribed), Label = "Subscribed", Type = FieldType.Checkbox },
-            new FormField { Name = nameof(DemoContact.Plan), Label = "Plan", Type = FieldType.Select,
+            new FormField { Name = nameof(DemoContact.FullName), Label = "Full name", Required = true, Hint = "As it appears on your ID" },
+            new FormField { Name = nameof(DemoContact.Email), Label = "Email", Type = FieldType.Email, Placeholder = "you@example.com" },
+            new FormField { Name = nameof(DemoContact.Password), Label = "Password", Type = FieldType.Password, Placeholder = "••••••••" },
+            new FormField { Name = nameof(DemoContact.Subscribed), Label = "Subscribed", Type = FieldType.Switch },
+            new FormField { Name = nameof(DemoContact.Plan), Label = "Plan", Type = FieldType.Radio,
                 Options = new object[] { "Free", "Pro", "Enterprise" } },
+            new FormField { Name = nameof(DemoContact.Age), Label = "Age", Type = FieldType.Number, Min = 0, Max = 120, Hint = "0–120" },
         };
         form.Model = new DemoContact();
 
