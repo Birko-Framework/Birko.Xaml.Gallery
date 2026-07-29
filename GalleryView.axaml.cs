@@ -167,7 +167,14 @@ public partial class GalleryView : UserControl
 
     private void PopulateChrome()
     {
-        RibbonItem I(string label, string icon) => new() { Id = label, Label = label, Icon = icon };
+        // Every demo command reports itself, so "it ran and the ribbon re-collapsed" is observable. Without
+        // this the reviewer could see the reveal close but not whether the command had actually fired.
+        RibbonItem I(string label, string icon) => new()
+        {
+            Id = label, Label = label, Icon = icon,
+            Run = () => this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text =
+                $"{label}  (at {DateTime.Now:HH:mm:ss})",
+        };
 
         // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
         // overflow behaviour is actually observable: everything fits on a maximized window, and

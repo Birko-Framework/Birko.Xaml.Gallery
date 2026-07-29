@@ -166,6 +166,12 @@
                            Foreground="{DynamicResource BTextMutedBrush}"
                            Text="pinned — the body sits in the layout" />
               </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Last command:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <TextBlock Name="DemoRibbonLastCommand" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BColorPrimaryBrush}" Text="(none yet)" />
+              </StackPanel>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
