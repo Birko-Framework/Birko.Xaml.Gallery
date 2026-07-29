@@ -167,7 +167,14 @@ public partial class GalleryView : UserControl
 
     private void PopulateChrome()
     {
-        RibbonItem I(string label, string icon) => new() { Id = label, Label = label, Icon = icon };
+        // Every demo command reports itself, so "it ran and the ribbon re-collapsed" is observable. Without
+        // this the reviewer could see the reveal close but not whether the command had actually fired.
+        RibbonItem I(string label, string icon) => new()
+        {
+            Id = label, Label = label, Icon = icon,
+            Run = () => this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text =
+                $"{label}  (at {DateTime.Now:HH:mm:ss})",
+        };
 
         // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
         // overflow behaviour is actually observable: everything fits on a maximized window, and
@@ -223,6 +230,21 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Support", Items = new[] { I("Docs", "\U0001F4D8"), I("Contact", "✉") } },
             }},
         };
+    }
+
+    // TASK-101 — the pin toggle, so the two collapse modes are comparable by hand: pinned keeps the body
+    // in the layout, unpinned reveals it temporarily as an overlay and re-collapses after a command.
+    private void OnToggleRibbonPin(object? sender, RoutedEventArgs e)
+    {
+        var ribbon = this.FindControl<Ribbon>("DemoRibbon")!;
+        ribbon.IsPinned = !ribbon.IsPinned;
+        if (!ribbon.IsPinned) ribbon.IsCollapsed = true; // unpinned only means anything while minimised
+
+        this.FindControl<Button>("DemoRibbonPinToggle")!.Content =
+            ribbon.IsPinned ? "Unpin the ribbon" : "Pin the ribbon";
+        this.FindControl<TextBlock>("DemoRibbonPinState")!.Text = ribbon.IsPinned
+            ? "pinned — the body sits in the layout"
+            : "unpinned — click a tab to reveal it temporarily over the page";
     }
 
     private void PopulateOverlays()

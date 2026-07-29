@@ -157,7 +157,21 @@
               <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
                          Text="The shell ships two chrome styles: a sidebar (ShellView) and this ribbon (RibbonShellView), both over the same ShellViewModel. Run a shell app to see them full-size; here is the ribbon control on its own." />
               <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="Resize the window to watch Office-style progressive scaling: groups degrade Medium → Small → a single ▾ button (whose flyout holds the group at full size) in priority order, so Export gives way first and Clipboard last. Clipboard is floored at Small, so it never folds into a flyout. The tab strip scrolls; the ribbon body never does." />
+                         Text="Resize the window to watch Office-style progressive scaling: groups degrade Medium → Small → a single ▾ button (whose flyout holds the group at full size) in priority order, so Export gives way first and Clipboard last. Clipboard is floored at Small, so it gives way only if the alternative is clipping. Narrower still, the ▾ buttons drop their names (hover for the name); narrower again the whole ribbon becomes ☰. The tab strip scrolls; the ribbon body never does." />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Pin mode:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <Button Name="DemoRibbonPinToggle" Click="OnToggleRibbonPin" Content="Unpin the ribbon" />
+                <TextBlock Name="DemoRibbonPinState" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextMutedBrush}"
+                           Text="pinned — the body sits in the layout" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Last command:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <TextBlock Name="DemoRibbonLastCommand" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BColorPrimaryBrush}" Text="(none yet)" />
+              </StackPanel>
             </StackPanel>
           </ScrollViewer>
         </TabItem>
