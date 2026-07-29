@@ -106,7 +106,16 @@ public partial class GalleryView : UserControl
         };
         form.Model = new DemoContact();
 
-        this.FindControl<Breadcrumb>("DemoCrumb")!.ItemsSource = new[] { "Home", "Contacts", "Ada Lovelace" };
+        // Clickable crumbs (BreadcrumbItem with Run/Href) — the last is the current location.
+        var crumbStatus = this.FindControl<TextBlock>("DemoCrumbStatus")!;
+        var crumb = this.FindControl<Breadcrumb>("DemoCrumb")!;
+        crumb.ItemsSource = new[]
+        {
+            new BreadcrumbItem { Label = "Home", Href = "#/", Run = () => crumbStatus.Text = "Navigated: Home" },
+            new BreadcrumbItem { Label = "Contacts", Href = "#/contacts", Run = () => crumbStatus.Text = "Navigated: Contacts" },
+            new BreadcrumbItem { Label = "Ada Lovelace" }, // current — static
+        };
+        crumb.ItemInvoked += (_, item) => crumbStatus.Text = $"Navigated: {item.Label} ({item.Href})";
 
         this.FindControl<DataGrid>("DemoGrid")!.ItemsSource = new[]
         {
@@ -159,16 +168,49 @@ public partial class GalleryView : UserControl
     private void PopulateChrome()
     {
         RibbonItem I(string label, string icon) => new() { Id = label, Label = label, Icon = icon };
+
+        // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
+        // overflow behaviour is actually observable: everything fits on a maximized window, and
+        // narrowing it reveals the tab-strip and groups-row chevrons (STORY-049/TASK-097). With the
+        // old 2-tab / 2-group demo nothing ever overflowed, so the fix could not be reviewed by hand.
         this.FindControl<Ribbon>("DemoRibbon")!.Tabs = new[]
         {
             new RibbonTab { Id = "home", Label = "Home", Groups = new[]
             {
                 new RibbonGroup { Label = "Clipboard", Items = new[] { I("Paste", "\U0001F4CB"), I("Cut", "✂"), I("Copy", "\U0001F5D0") } },
-                new RibbonGroup { Label = "Records", Items = new[] { I("New", "➕"), I("Delete", "\U0001F5D1") } },
+                new RibbonGroup { Label = "Records", Items = new[] { I("New", "➕"), I("Delete", "\U0001F5D1"), I("Duplicate", "⧉") } },
+                new RibbonGroup { Label = "Font", Items = new[] { I("Bold", "\U0001D401"), I("Italic", "\U0001D470"), I("Colour", "\U0001F3A8") } },
+                new RibbonGroup { Label = "Layout", Items = new[] { I("Columns", "▥"), I("Rows", "▤") } },
+                new RibbonGroup { Label = "Review", Items = new[] { I("Comment", "\U0001F4AC"), I("Track", "✓") } },
+                new RibbonGroup { Label = "Export", Items = new[] { I("PDF", "\U0001F4C4"), I("CSV", "\U0001F4CA"), I("Print", "\U0001F5A8") } },
+            }},
+            new RibbonTab { Id = "insert", Label = "Insert", Groups = new[]
+            {
+                new RibbonGroup { Label = "Media", Items = new[] { I("Image", "\U0001F5BC"), I("Table", "▦") } },
+            }},
+            new RibbonTab { Id = "design", Label = "Design", Groups = new[]
+            {
+                new RibbonGroup { Label = "Themes", Items = new[] { I("Palette", "\U0001F3A8"), I("Fonts", "\U0001D5A0") } },
+            }},
+            new RibbonTab { Id = "data", Label = "Data", Groups = new[]
+            {
+                new RibbonGroup { Label = "Query", Items = new[] { I("Filter", "\U0001F50D"), I("Sort", "↕") } },
             }},
             new RibbonTab { Id = "view", Label = "View", Groups = new[]
             {
                 new RibbonGroup { Label = "Zoom", Items = new[] { I("Zoom In", "\U0001F50D"), I("Reset", "↺") } },
+            }},
+            new RibbonTab { Id = "automate", Label = "Automate", Groups = new[]
+            {
+                new RibbonGroup { Label = "Macros", Items = new[] { I("Record", "⏺"), I("Run", "▶") } },
+            }},
+            new RibbonTab { Id = "developer", Label = "Developer", Groups = new[]
+            {
+                new RibbonGroup { Label = "Tools", Items = new[] { I("Console", "\U0001F5A5"), I("Inspect", "\U0001F50E") } },
+            }},
+            new RibbonTab { Id = "help", Label = "Help", Groups = new[]
+            {
+                new RibbonGroup { Label = "Support", Items = new[] { I("Docs", "\U0001F4D8"), I("Contact", "✉") } },
             }},
         };
     }
