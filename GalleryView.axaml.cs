@@ -225,6 +225,21 @@ public partial class GalleryView : UserControl
         };
     }
 
+    // TASK-101 — the pin toggle, so the two collapse modes are comparable by hand: pinned keeps the body
+    // in the layout, unpinned reveals it temporarily as an overlay and re-collapses after a command.
+    private void OnToggleRibbonPin(object? sender, RoutedEventArgs e)
+    {
+        var ribbon = this.FindControl<Ribbon>("DemoRibbon")!;
+        ribbon.IsPinned = !ribbon.IsPinned;
+        if (!ribbon.IsPinned) ribbon.IsCollapsed = true; // unpinned only means anything while minimised
+
+        this.FindControl<Button>("DemoRibbonPinToggle")!.Content =
+            ribbon.IsPinned ? "Unpin the ribbon" : "Pin the ribbon";
+        this.FindControl<TextBlock>("DemoRibbonPinState")!.Text = ribbon.IsPinned
+            ? "pinned — the body sits in the layout"
+            : "unpinned — click a tab to reveal it temporarily over the page";
+    }
+
     private void PopulateOverlays()
     {
         this.FindControl<FormModal>("DemoFormModal")!.Fields = new[]
