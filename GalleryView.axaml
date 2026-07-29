@@ -64,6 +64,7 @@
               </StackPanel>
 
               <c:Breadcrumb x:Name="DemoCrumb" />
+              <TextBlock x:Name="DemoCrumbStatus" FontSize="12" Opacity="0.7" />
 
               <!-- Slider (TASK-054): horizontal + a vertical equalizer bank -->
               <Slider Minimum="0" Maximum="100" Value="60" Width="240" HorizontalAlignment="Left" />
@@ -155,6 +156,8 @@
               </Border>
               <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
                          Text="The shell ships two chrome styles: a sidebar (ShellView) and this ribbon (RibbonShellView), both over the same ShellViewModel. Run a shell app to see them full-size; here is the ribbon control on its own." />
+              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
+                         Text="Resize the window to watch Office-style progressive scaling: groups degrade Medium → Small → a single ▾ button (whose flyout holds the group at full size) in priority order, so Export gives way first and Clipboard last. Clipboard is floored at Small, so it never folds into a flyout. The tab strip scrolls; the ribbon body never does." />
             </StackPanel>
           </ScrollViewer>
         </TabItem>

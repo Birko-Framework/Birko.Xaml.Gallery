@@ -177,12 +177,22 @@ public partial class GalleryView : UserControl
         {
             new RibbonTab { Id = "home", Label = "Home", Groups = new[]
             {
-                new RibbonGroup { Label = "Clipboard", Items = new[] { I("Paste", "\U0001F4CB"), I("Cut", "✂"), I("Copy", "\U0001F5D0") } },
-                new RibbonGroup { Label = "Records", Items = new[] { I("New", "➕"), I("Delete", "\U0001F5D1"), I("Duplicate", "⧉") } },
-                new RibbonGroup { Label = "Font", Items = new[] { I("Bold", "\U0001D401"), I("Italic", "\U0001D470"), I("Colour", "\U0001F3A8") } },
-                new RibbonGroup { Label = "Layout", Items = new[] { I("Columns", "▥"), I("Rows", "▤") } },
-                new RibbonGroup { Label = "Review", Items = new[] { I("Comment", "\U0001F4AC"), I("Track", "✓") } },
-                new RibbonGroup { Label = "Export", Items = new[] { I("PDF", "\U0001F4C4"), I("CSV", "\U0001F4CA"), I("Print", "\U0001F5A8") } },
+                // Priorities are set deliberately so the degrade ORDER is visible while resizing: a lower
+                // ScalingPriority gives way first, so Export collapses long before Clipboard is touched.
+                // Clipboard is also floored at Small, so it never folds into a flyout however narrow the
+                // window gets — the hero group stays directly clickable.
+                new RibbonGroup { Label = "Clipboard", Icon = "📋", ScalingPriority = 100, MinSize = RibbonGroupSize.Small,
+                    Items = new[] { I("Paste", "📋"), I("Cut", "✂"), I("Copy", "🗐") } },
+                new RibbonGroup { Label = "Records", Icon = "🗃", ScalingPriority = 80,
+                    Items = new[] { I("New", "➕"), I("Delete", "🗑"), I("Duplicate", "⧉") } },
+                new RibbonGroup { Label = "Font", Icon = "𝖠", ScalingPriority = 60,
+                    Items = new[] { I("Bold", "𝐁"), I("Italic", "𝑰"), I("Colour", "🎨") } },
+                new RibbonGroup { Label = "Layout", Icon = "▥", ScalingPriority = 40,
+                    Items = new[] { I("Columns", "▥"), I("Rows", "▤") } },
+                new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
+                    Items = new[] { I("Comment", "💬"), I("Track", "✓") } },
+                new RibbonGroup { Label = "Export", Icon = "📤", ScalingPriority = 0,
+                    Items = new[] { I("PDF", "📄"), I("CSV", "📊"), I("Print", "🖨") } },
             }},
             new RibbonTab { Id = "insert", Label = "Insert", Groups = new[]
             {
