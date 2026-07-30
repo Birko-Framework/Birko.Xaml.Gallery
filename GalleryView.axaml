@@ -22,7 +22,11 @@
         </StackPanel>
       </StackPanel>
 
-      <TabControl>
+      <!-- TabNavigation=Continue so Tab actually walks INTO the selected tab's content. Avalonia's default
+           for TabControl is Once: Tab visits the selected header and then skips the content, so a
+           keyboard-only user could never reach anything inside a tab (found while doing TASK-100's
+           keyboard pass — a gallery-configuration issue, not a control defect). -->
+      <TabControl KeyboardNavigation.TabNavigation="Continue">
 
         <!-- ── Controls ─────────────────────────────────────────────── -->
         <TabItem Header="Controls">
