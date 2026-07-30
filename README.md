@@ -17,7 +17,7 @@ tokens shared byte-for-byte with Birko.Web.
 ## What it shows
 
 Organized into `TabControl` sections (which also dogfoods `b-tabs`):
-- **Controls** — buttons, badge/tag, input, combobox, checkbox/radio/toggle, progress + spinner, dropdown menu, breadcrumb, tooltip.
+- **Controls** — buttons, badge/tag, input, combobox, checkbox/radio/toggle, progress + spinner, dropdown menu, breadcrumb (clickable crumbs — links write to a status line, last is the current location), tooltip.
 - **Forms & data** — schema-driven `Form`, `DataGrid`, `TreeView`.
 - **Viewers** — `ObjectTree` (JSON), `XmlViewer`, `MarkdownEditor`.
 - **Composites** — `Kanban`, `BChart` (LiveCharts2).
