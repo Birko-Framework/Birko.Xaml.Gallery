@@ -197,6 +197,9 @@ public partial class GalleryView : UserControl
         // overflow behaviour is actually observable: everything fits on a maximized window, and
         // narrowing it reveals the tab-strip and groups-row chevrons (STORY-049/TASK-097). With the
         // old 2-tab / 2-group demo nothing ever overflowed, so the fix could not be reviewed by hand.
+        // The launcher reports itself on the same line as the commands (TASK-756).
+        this.FindControl<Ribbon>("DemoRibbon")!.GroupLauncherInvoked += (_, e) =>
+            this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{e.GroupId} dialog  (at {DateTime.Now:HH:mm:ss})";
         this.FindControl<Ribbon>("DemoRibbon")!.Tabs = new[]
         {
             new RibbonTab { Id = "home", Label = "Home", Groups = new[]
@@ -218,7 +221,7 @@ public partial class GalleryView : UserControl
                     } },
                 new RibbonGroup { Label = "Records", Icon = "🗃", ScalingPriority = 80,
                     Items = new[] { I("New", "➕"), I("Delete", "🗑"), I("Duplicate", "⧉") } },
-                new RibbonGroup { Label = "Font", Icon = "𝖠", ScalingPriority = 60,
+                new RibbonGroup { Label = "Font", Icon = "𝖠", ScalingPriority = 60, Launcher = true, // the corner arrow (TASK-756)
                     // Bold and Italic are toggles, Columns / Rows a one-of set (TASK-754), as in the web Playground.
                     Items = new[]
                     {
