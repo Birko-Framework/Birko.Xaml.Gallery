@@ -169,9 +169,9 @@ public partial class GalleryView : UserControl
     {
         // Every demo command reports itself, so "it ran and the ribbon re-collapsed" is observable. Without
         // this the reviewer could see the reveal close but not whether the command had actually fired.
-        RibbonItem I(string label, string icon) => new()
+        RibbonItem I(string label, string icon, string? description = null, string? shortcut = null) => new()
         {
-            Id = label, Label = label, Icon = icon,
+            Id = label, Label = label, Icon = icon, Description = description, Shortcut = shortcut,
             Run = () => this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text =
                 $"{label}  (at {DateTime.Now:HH:mm:ss})",
         };
@@ -189,11 +189,17 @@ public partial class GalleryView : UserControl
                 // Clipboard is also floored at Small, so it never folds into a flyout however narrow the
                 // window gets — the hero group stays directly clickable.
                 new RibbonGroup { Label = "Clipboard", Icon = "📋", ScalingPriority = 100, MinSize = RibbonGroupSize.Small,
-                    Items = new[] { I("Paste", "📋"), I("Cut", "✂"), I("Copy", "🗐") } },
+                    // Descriptions and shortcuts feed the rich tooltips (TASK-753), as in the web Playground's demo.
+                    Items = new[]
+                    {
+                        I("Paste", "📋", "Add content from the clipboard.", "Ctrl+V"),
+                        I("Cut", "✂", "Remove the selection and put it on the clipboard.", "Ctrl+X"),
+                        I("Copy", "🗐", "Put a copy of the selection on the clipboard.", "Ctrl+C"),
+                    } },
                 new RibbonGroup { Label = "Records", Icon = "🗃", ScalingPriority = 80,
                     Items = new[] { I("New", "➕"), I("Delete", "🗑"), I("Duplicate", "⧉") } },
                 new RibbonGroup { Label = "Font", Icon = "𝖠", ScalingPriority = 60,
-                    Items = new[] { I("Bold", "𝐁"), I("Italic", "𝑰"), I("Colour", "🎨") } },
+                    Items = new[] { I("Bold", "𝐁", "Make the selected text bold.", "Ctrl+B"), I("Italic", "𝑰"), I("Colour", "🎨") } },
                 new RibbonGroup { Label = "Layout", Icon = "▥", ScalingPriority = 40,
                     Items = new[] { I("Columns", "▥"), I("Rows", "▤") } },
                 new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
