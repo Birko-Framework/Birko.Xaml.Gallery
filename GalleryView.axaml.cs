@@ -176,6 +176,12 @@ public partial class GalleryView : UserControl
                 $"{label}  (at {DateTime.Now:HH:mm:ss})",
         };
 
+        static RibbonItem Toggle(RibbonItem i, bool pressed = false, string? set = null) => new()
+        {
+            Id = i.Id, Label = i.Label, Icon = i.Icon, Description = i.Description, Shortcut = i.Shortcut, Run = i.Run,
+            Toggle = set is null, ToggleGroup = set, Pressed = pressed,
+        };
+
         // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
         // overflow behaviour is actually observable: everything fits on a maximized window, and
         // narrowing it reveals the tab-strip and groups-row chevrons (STORY-049/TASK-097). With the
@@ -199,9 +205,15 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Records", Icon = "🗃", ScalingPriority = 80,
                     Items = new[] { I("New", "➕"), I("Delete", "🗑"), I("Duplicate", "⧉") } },
                 new RibbonGroup { Label = "Font", Icon = "𝖠", ScalingPriority = 60,
-                    Items = new[] { I("Bold", "𝐁", "Make the selected text bold.", "Ctrl+B"), I("Italic", "𝑰"), I("Colour", "🎨") } },
+                    // Bold and Italic are toggles, Columns / Rows a one-of set (TASK-754), as in the web Playground.
+                    Items = new[]
+                    {
+                        Toggle(I("Bold", "𝐁", "Make the selected text bold.", "Ctrl+B"), pressed: true),
+                        Toggle(I("Italic", "𝑰")),
+                        I("Colour", "🎨"),
+                    } },
                 new RibbonGroup { Label = "Layout", Icon = "▥", ScalingPriority = 40,
-                    Items = new[] { I("Columns", "▥"), I("Rows", "▤") } },
+                    Items = new[] { Toggle(I("Columns", "▥"), pressed: true, set: "orient"), Toggle(I("Rows", "▤"), set: "orient") } },
                 new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
                     Items = new[] { I("Comment", "💬"), I("Track", "✓") } },
                 new RibbonGroup { Label = "Export", Icon = "📤", ScalingPriority = 0,
