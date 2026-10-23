@@ -239,6 +239,18 @@ public partial class GalleryView : UserControl
                         Toggle(I("Italic", "𝑰")),
                         I("Colour", "🎨"),
                     } },
+                // A gallery (TASK-761), as in the web Playground: framed by default, the look picked under the ribbon.
+                new RibbonGroup { Label = "Styles", Icon = "🅰", ScalingPriority = 50,
+                    Items = new[]
+                    {
+                        new RibbonItem { Id = "styles", Label = "Styles", Gallery = new RibbonGallery
+                        {
+                            Selected = "normal",
+                            Items = new[] { ("normal", "Normal", "Aa"), ("h1", "Heading 1", "H1"), ("h2", "Heading 2", "H2"), ("title", "Title", "T"),
+                                ("subtitle", "Subtitle", "St"), ("quote", "Quote", "❝"), ("code", "Code", "{}"), ("emphasis", "Emphasis", "𝑒") }
+                                .Select(s => new RibbonGalleryItem { Id = s.Item1, Label = s.Item2, Preview = s.Item3 }).ToList(),
+                        } },
+                    } },
                 new RibbonGroup { Label = "Layout", Icon = "▥", ScalingPriority = 40,
                     Items = new[] { Toggle(I("Columns", "▥"), pressed: true, set: "orient"), Toggle(I("Rows", "▤"), set: "orient") } },
                 new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
@@ -290,6 +302,8 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Rows & Columns", Items = new[] { I("Insert Above", "⤒"), I("Insert Below", "⤓"), I("Delete Row", "🗑") } },
             }},
         };
+        demoRibbon.GalleryItemPicked += (_, e) =>
+            this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{e.ParentId}: {e.ItemId}  (at {DateTime.Now:HH:mm:ss})";
         demoRibbon.SetContextualSets(new[] { new RibbonContextualSet { Id = "table", Label = "Table Tools", Color = RibbonContextualColor.Success } });
         if (System.IO.File.Exists(QuickAccessFile)) demoRibbon.SetQuickAccessRefs(System.IO.File.ReadAllLines(QuickAccessFile));
     }
@@ -309,6 +323,12 @@ public partial class GalleryView : UserControl
     {
         if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
         ribbon.ContextualStyle = (RibbonContextualStyle)System.Math.Max(0, box.SelectedIndex);
+    }
+
+    private void OnRibbonGalleryStyle(object? sender, SelectionChangedEventArgs e)
+    {
+        if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
+        ribbon.GalleryStyle = (RibbonGalleryStyle)System.Math.Max(0, box.SelectedIndex);
     }
 
     // TASK-101 — the pin toggle, so the two collapse modes are comparable by hand: pinned keeps the body

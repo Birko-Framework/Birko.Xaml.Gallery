@@ -181,6 +181,16 @@
                   <ComboBoxItem Content="Edge" />
                 </ComboBox>
               </StackPanel>
+              <!-- Galleries (TASK-761): the Styles gallery's look. -->
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Gallery look:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <ComboBox Name="DemoRibbonGalleryStyle" SelectedIndex="0" SelectionChanged="OnRibbonGalleryStyle">
+                  <ComboBoxItem Content="Framed" />
+                  <ComboBoxItem Content="Open" />
+                  <ComboBoxItem Content="Dropdown" />
+                </ComboBox>
+              </StackPanel>
               <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock Text="Last command:" VerticalAlignment="Center"
                            Foreground="{DynamicResource BTextSecondaryBrush}" />
