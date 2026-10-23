@@ -203,6 +203,7 @@ public partial class GalleryView : UserControl
         // The Quick Access Toolbar (TASK-759): right-click a command to add it. The app saves the choice (the
         // ribbon writes no file); this demo keeps it under LocalApplicationData and restores it at start.
         var demoRibbon = this.FindControl<Ribbon>("DemoRibbon")!;
+        demoRibbon.PropertyChanged += (_, e) => { if (e.Property == Ribbon.IsPinnedProperty) ShowRibbonPinState(demoRibbon); };
         demoRibbon.SetQuickAccess(new[] { I("Save", "💾", "Save the document.", "Ctrl+S"), I("Undo", "↶", null, "Ctrl+Z"), I("Redo", "↷", null, "Ctrl+Y") });
         demoRibbon.QuickAccessChanged += (_, refs) =>
         {
@@ -368,9 +369,12 @@ public partial class GalleryView : UserControl
     private void OnToggleRibbonPin(object? sender, RoutedEventArgs e)
     {
         var ribbon = this.FindControl<Ribbon>("DemoRibbon")!;
-        ribbon.IsPinned = !ribbon.IsPinned;
-        if (!ribbon.IsPinned) ribbon.IsCollapsed = true; // unpinned only means anything while minimised
+        ribbon.IsPinned = !ribbon.IsPinned; // unpinned is collapsed, pinned is open: the ribbon keeps them one state
+    }
 
+    // The label follows the ribbon, which the chevron, a double-click and Ctrl+F1 also pin and unpin.
+    private void ShowRibbonPinState(Ribbon ribbon)
+    {
         this.FindControl<Button>("DemoRibbonPinToggle")!.Content =
             ribbon.IsPinned ? "Unpin the ribbon" : "Pin the ribbon";
         this.FindControl<TextBlock>("DemoRibbonPinState")!.Text = ribbon.IsPinned
