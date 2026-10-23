@@ -200,6 +200,16 @@ public partial class GalleryView : UserControl
         // The launcher reports itself on the same line as the commands (TASK-756).
         this.FindControl<Ribbon>("DemoRibbon")!.GroupLauncherInvoked += (_, e) =>
             this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{e.GroupId} dialog  (at {DateTime.Now:HH:mm:ss})";
+        // The Quick Access Toolbar (TASK-759): right-click a command to add it. The app saves the choice (the
+        // ribbon writes no file); this demo keeps it under LocalApplicationData and restores it at start.
+        var demoRibbon = this.FindControl<Ribbon>("DemoRibbon")!;
+        demoRibbon.SetQuickAccess(new[] { I("Save", "💾", "Save the document.", "Ctrl+S"), I("Undo", "↶", null, "Ctrl+Z"), I("Redo", "↷", null, "Ctrl+Y") });
+        demoRibbon.QuickAccessChanged += (_, refs) =>
+        {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(QuickAccessFile)!);
+            System.IO.File.WriteAllLines(QuickAccessFile, refs);
+            this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"Toolbar saved: {string.Join(", ", refs)}";
+        };
         this.FindControl<Ribbon>("DemoRibbon")!.Tabs = new[]
         {
             new RibbonTab { Id = "home", Label = "Home", Groups = new[]
@@ -271,7 +281,11 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Support", Items = new[] { I("Docs", "\U0001F4D8"), I("Contact", "✉") } },
             }},
         };
+        if (System.IO.File.Exists(QuickAccessFile)) demoRibbon.SetQuickAccessRefs(System.IO.File.ReadAllLines(QuickAccessFile));
     }
+
+    private static readonly string QuickAccessFile = System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Birko.Xaml.Gallery", "quick-access.txt");
 
     // TASK-101 — the pin toggle, so the two collapse modes are comparable by hand: pinned keeps the body
     // in the layout, unpinned reveals it temporarily as an overlay and re-collapses after a command.
