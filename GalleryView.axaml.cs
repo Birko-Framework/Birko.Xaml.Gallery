@@ -341,18 +341,24 @@ public partial class GalleryView : UserControl
 
     private void OnRibbonContextualStyle(object? sender, SelectionChangedEventArgs e)
     {
+        // Raised while the XAML is still loading (its first pick), before the names resolve; that pick is the default.
+        if (!IsInitialized) return;
         if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
         ribbon.ContextualStyle = (RibbonContextualStyle)System.Math.Max(0, box.SelectedIndex);
     }
 
     private void OnRibbonFieldCaption(object? sender, SelectionChangedEventArgs e)
     {
+        // Raised while the XAML is still loading (its first pick), before the names resolve; that pick is the default.
+        if (!IsInitialized) return;
         if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
         ribbon.FieldCaption = (RibbonFieldCaption)System.Math.Max(0, box.SelectedIndex);
     }
 
     private void OnRibbonGalleryStyle(object? sender, SelectionChangedEventArgs e)
     {
+        // Raised while the XAML is still loading (its first pick), before the names resolve; that pick is the default.
+        if (!IsInitialized) return;
         if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
         ribbon.GalleryStyle = (RibbonGalleryStyle)System.Math.Max(0, box.SelectedIndex);
     }
