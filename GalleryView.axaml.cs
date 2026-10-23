@@ -182,6 +182,17 @@ public partial class GalleryView : UserControl
             Toggle = set is null, ToggleGroup = set, Pressed = pressed,
         };
 
+        RibbonMenuItem Choice(string label, string? icon = null, string? shortcut = null, bool disabled = false) => new()
+        {
+            Id = label, Label = label, Icon = icon, Shortcut = shortcut, Disabled = disabled,
+            Run = () => this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{label}  (at {DateTime.Now:HH:mm:ss})",
+        };
+        static RibbonItem WithMenu(RibbonItem i, bool split, params RibbonMenuEntry[] menu) => new()
+        {
+            Id = i.Id, Label = i.Label, Icon = i.Icon, Description = i.Description, Shortcut = i.Shortcut, Run = i.Run,
+            Menu = menu, Split = split,
+        };
+
         // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
         // overflow behaviour is actually observable: everything fits on a maximized window, and
         // narrowing it reveals the tab-strip and groups-row chevrons (STORY-049/TASK-097). With the
@@ -198,7 +209,10 @@ public partial class GalleryView : UserControl
                     // Descriptions and shortcuts feed the rich tooltips (TASK-753), as in the web Playground's demo.
                     Items = new[]
                     {
-                        I("Paste", "📋", "Add content from the clipboard.", "Ctrl+V"),
+                        // A split button: Paste pastes, its ▾ opens the menu (TASK-755), as in the web Playground.
+                        WithMenu(I("Paste", "📋", "Add content from the clipboard.", "Ctrl+V"), split: true,
+                            Choice("Paste as text", "📝", "Ctrl+Shift+V"), Choice("Paste as picture", "🖼"),
+                            RibbonMenuEntry.Separator, Choice("Paste special…", null, "Ctrl+Alt+V")),
                         I("Cut", "✂", "Remove the selection and put it on the clipboard.", "Ctrl+X"),
                         I("Copy", "🗐", "Put a copy of the selection on the clipboard.", "Ctrl+C"),
                     } },
@@ -217,7 +231,13 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
                     Items = new[] { I("Comment", "💬"), I("Track", "✓") } },
                 new RibbonGroup { Label = "Export", Icon = "📤", ScalingPriority = 0,
-                    Items = new[] { I("PDF", "📄"), I("CSV", "📊"), I("Print", "🖨") } },
+                    Items = new[]
+                    {
+                        I("PDF", "📄"),
+                        WithMenu(I("CSV", "📊"), split: false,
+                            Choice("Comma separated"), Choice("Semicolon separated"), Choice("UTF-8 with BOM", disabled: true)),
+                        I("Print", "🖨"),
+                    } },
             }},
             new RibbonTab { Id = "insert", Label = "Insert", Groups = new[]
             {
