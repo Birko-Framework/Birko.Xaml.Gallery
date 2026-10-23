@@ -170,6 +170,17 @@
                            Foreground="{DynamicResource BTextMutedBrush}"
                            Text="pinned — the body sits in the layout" />
               </StackPanel>
+              <!-- Contextual tabs (TASK-760): "select a table" shows the Table Tools set, in the look picked here. -->
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="Contextual tabs:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <CheckBox Name="DemoRibbonTableSelected" Content="A table is selected" IsCheckedChanged="OnRibbonTableSelected" />
+                <ComboBox Name="DemoRibbonContextualStyle" SelectedIndex="0" SelectionChanged="OnRibbonContextualStyle">
+                  <ComboBoxItem Content="Band" />
+                  <ComboBoxItem Content="Pill" />
+                  <ComboBoxItem Content="Edge" />
+                </ComboBox>
+              </StackPanel>
               <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock Text="Last command:" VerticalAlignment="Center"
                            Foreground="{DynamicResource BTextSecondaryBrush}" />

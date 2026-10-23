@@ -280,12 +280,36 @@ public partial class GalleryView : UserControl
             {
                 new RibbonGroup { Label = "Support", Items = new[] { I("Docs", "\U0001F4D8"), I("Contact", "✉") } },
             }},
+            // Contextual tabs (TASK-760): shown while "a table is selected", as in the web Playground.
+            new RibbonTab { Id = "table-design", Label = "Table Design", ContextualSet = "table", Groups = new[]
+            {
+                new RibbonGroup { Label = "Table Styles", Items = new[] { I("Banded Rows", "▤"), I("Header Row", "▔") } },
+            }},
+            new RibbonTab { Id = "table-layout", Label = "Layout", ContextualSet = "table", Groups = new[]
+            {
+                new RibbonGroup { Label = "Rows & Columns", Items = new[] { I("Insert Above", "⤒"), I("Insert Below", "⤓"), I("Delete Row", "🗑") } },
+            }},
         };
+        demoRibbon.SetContextualSets(new[] { new RibbonContextualSet { Id = "table", Label = "Table Tools", Color = RibbonContextualColor.Success } });
         if (System.IO.File.Exists(QuickAccessFile)) demoRibbon.SetQuickAccessRefs(System.IO.File.ReadAllLines(QuickAccessFile));
     }
 
     private static readonly string QuickAccessFile = System.IO.Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Birko.Xaml.Gallery", "quick-access.txt");
+
+    // TASK-760 — selecting a table shows its contextual set and opens it; deselecting hides it and goes back.
+    private void OnRibbonTableSelected(object? sender, RoutedEventArgs e)
+    {
+        var ribbon = this.FindControl<Ribbon>("DemoRibbon")!;
+        if (this.FindControl<CheckBox>("DemoRibbonTableSelected")!.IsChecked == true) ribbon.ShowContextual("table", select: true);
+        else ribbon.HideContextual("table");
+    }
+
+    private void OnRibbonContextualStyle(object? sender, SelectionChangedEventArgs e)
+    {
+        if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
+        ribbon.ContextualStyle = (RibbonContextualStyle)System.Math.Max(0, box.SelectedIndex);
+    }
 
     // TASK-101 — the pin toggle, so the two collapse modes are comparable by hand: pinned keeps the body
     // in the layout, unpinned reveals it temporarily as an overlay and re-collapses after a command.
