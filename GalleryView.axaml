@@ -190,6 +190,14 @@
                   <ComboBoxItem Content="Open" />
                   <ComboBoxItem Content="Dropdown" />
                 </ComboBox>
+                <!-- Inputs (TASK-762): how Font, Size and Height are captioned. -->
+                <TextBlock Text="Input captions:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextSecondaryBrush}" />
+                <ComboBox Name="DemoRibbonFieldCaption" SelectedIndex="0" SelectionChanged="OnRibbonFieldCaption">
+                  <ComboBoxItem Content="None" />
+                  <ComboBoxItem Content="Beside" />
+                  <ComboBoxItem Content="Above" />
+                </ComboBox>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Spacing="8">
                 <TextBlock Text="Last command:" VerticalAlignment="Center"

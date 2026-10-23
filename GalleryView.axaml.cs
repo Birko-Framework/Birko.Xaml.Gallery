@@ -235,6 +235,17 @@ public partial class GalleryView : UserControl
                     // Bold and Italic are toggles, Columns / Rows a one-of set (TASK-754), as in the web Playground.
                     Items = new[]
                     {
+                        // Inputs (TASK-762), as in the web Playground: both dropdowns take a value not in their list.
+                        new RibbonItem { Id = "font-name", Label = "Font", Description = "Pick or type a font.", Field = new RibbonField
+                        {
+                            Type = RibbonFieldType.Select, FreeText = true, Value = "Calibri", Width = 10,
+                            Options = new[] { "Calibri", "Arial", "Cambria", "Consolas", "Segoe UI" }.Select(f => new RibbonFieldOption { Value = f, Label = f }).ToList(),
+                        } },
+                        new RibbonItem { Id = "font-size", Label = "Size", Description = "Pick or type a size.", Field = new RibbonField
+                        {
+                            Type = RibbonFieldType.Select, FreeText = true, Value = "11", Width = 3,
+                            Options = new[] { "8", "9", "10", "11", "12", "14", "16", "20", "24" }.Select(v => new RibbonFieldOption { Value = v, Label = v }).ToList(),
+                        } },
                         Toggle(I("Bold", "𝐁", "Make the selected text bold.", "Ctrl+B"), pressed: true),
                         Toggle(I("Italic", "𝑰")),
                         I("Colour", "🎨"),
@@ -252,7 +263,14 @@ public partial class GalleryView : UserControl
                         } },
                     } },
                 new RibbonGroup { Label = "Layout", Icon = "▥", ScalingPriority = 40,
-                    Items = new[] { Toggle(I("Columns", "▥"), pressed: true, set: "orient"), Toggle(I("Rows", "▤"), set: "orient") } },
+                    Items = new[]
+                    {
+                        Toggle(I("Columns", "▥"), pressed: true, set: "orient"), Toggle(I("Rows", "▤"), set: "orient"),
+                        new RibbonItem { Id = "height", Label = "Height", Description = "Row height; ↑ ↓ step it.", Field = new RibbonField
+                        {
+                            Type = RibbonFieldType.Number, Value = "12", Min = 4, Max = 40, Step = 2, Width = 4,
+                        } },
+                    } },
                 new RibbonGroup { Label = "Review", Icon = "💬", ScalingPriority = 20,
                     Items = new[] { I("Comment", "💬"), I("Track", "✓") } },
                 new RibbonGroup { Label = "Export", Icon = "📤", ScalingPriority = 0,
@@ -302,6 +320,8 @@ public partial class GalleryView : UserControl
                 new RibbonGroup { Label = "Rows & Columns", Items = new[] { I("Insert Above", "⤒"), I("Insert Below", "⤓"), I("Delete Row", "🗑") } },
             }},
         };
+        demoRibbon.FieldChanged += (_, e) =>
+            this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{e.ItemId} = {e.Value}  (at {DateTime.Now:HH:mm:ss})";
         demoRibbon.GalleryItemPicked += (_, e) =>
             this.FindControl<TextBlock>("DemoRibbonLastCommand")!.Text = $"{e.ParentId}: {e.ItemId}  (at {DateTime.Now:HH:mm:ss})";
         demoRibbon.SetContextualSets(new[] { new RibbonContextualSet { Id = "table", Label = "Table Tools", Color = RibbonContextualColor.Success } });
@@ -323,6 +343,12 @@ public partial class GalleryView : UserControl
     {
         if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
         ribbon.ContextualStyle = (RibbonContextualStyle)System.Math.Max(0, box.SelectedIndex);
+    }
+
+    private void OnRibbonFieldCaption(object? sender, SelectionChangedEventArgs e)
+    {
+        if (this.FindControl<Ribbon>("DemoRibbon") is not { } ribbon || sender is not ComboBox box) return;
+        ribbon.FieldCaption = (RibbonFieldCaption)System.Math.Max(0, box.SelectedIndex);
     }
 
     private void OnRibbonGalleryStyle(object? sender, SelectionChangedEventArgs e)
