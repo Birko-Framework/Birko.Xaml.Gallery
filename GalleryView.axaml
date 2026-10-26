@@ -129,6 +129,25 @@
               <TextBlock Text="XML viewer" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
               <ContentControl Theme="{StaticResource BCard}"><c:XmlViewer x:Name="DemoXml" /></ContentControl>
 
+              <TextBlock Text="JSON / XML diff (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}">
+                <StackPanel Spacing="8">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="DiffJsonSample" Content="JSON sample" />
+                    <Button x:Name="DiffXmlSample" Content="XML sample" />
+                    <ComboBox x:Name="DiffFormat" SelectedIndex="0" MinWidth="100">
+                      <ComboBoxItem Content="JSON" />
+                      <ComboBoxItem Content="XML" />
+                    </ComboBox>
+                  </StackPanel>
+                  <Grid ColumnDefinitions="*,8,*">
+                    <TextBox x:Name="DiffSideA" Grid.Column="0" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="production" />
+                    <TextBox x:Name="DiffSideB" Grid.Column="2" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="localhost" />
+                  </Grid>
+                  <c:JsonDiffViewer x:Name="DemoDiff" LabelA="production" LabelB="localhost" Height="320" />
+                </StackPanel>
+              </ContentControl>
+
               <TextBlock Text="Markdown editor" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
               <ContentControl Theme="{StaticResource BCard}" Height="260"><c:MarkdownEditor x:Name="DemoMarkdown" /></ContentControl>
             </StackPanel>

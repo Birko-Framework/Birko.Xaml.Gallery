@@ -135,9 +135,57 @@ public partial class GalleryView : UserControl
             "<order id=\"1024\" status=\"open\"><customer>Ada Lovelace</customer>"
             + "<lines><line sku=\"A-1\" qty=\"2\" /><line sku=\"B-9\" qty=\"1\" /></lines></order>";
 
+        PopulateDiff();
+
         this.FindControl<MarkdownEditor>("DemoMarkdown")!.Markdown =
             "# Notes\n\nBirko.Xaml **Tier-2** composites.\n\n- viewers\n- kanban\n- chart\n\n"
             + "Run with `dotnet run`.";
+    }
+
+    // FEATURE-020 / TASK-772: the JSON / XML diff viewer. The two boxes are the sides; editing either compares again,
+    // so a broken body shows its parse error. Options mirror the web demo: Url ignored, Items paired by Id.
+    private const string DiffJsonA =
+        "{\n  \"Name\": \"x\",\n  \"Url\": \"https://www.finstat.sk/1\",\n  \"Same\": { \"k\": 1 },\n"
+        + "  \"Items\": [{ \"Id\": 1, \"v\": 1 }, { \"Id\": 2, \"v\": 2 }],\n  \"gone\": true\n}";
+    private const string DiffJsonB =
+        "{\n  \"Name\": \"y\",\n  \"Url\": \"https://test.finstat.sk/1\",\n  \"Same\": { \"k\": 1 },\n"
+        + "  \"Items\": [{ \"Id\": 2, \"v\": 2 }, { \"Id\": 1, \"v\": 5 }],\n  \"extra\": 1\n}";
+    private const string DiffXmlA =
+        "<EliteCZResult xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Ico>00177041</Ico><UnReliability xsi:nil=\"true\"/>"
+        + "<Contacts><Contact><Contact>326817192</Contact><Type>Phone</Type></Contact></Contacts>"
+        + "<OtherCzNaces><CzNace><Code>29</Code><Text>Výroba</Text></CzNace><CzNace><Code>30</Code><Text>Jiné</Text></CzNace></OtherCzNaces>"
+        + "<Offices><Count>3</Count></Offices></EliteCZResult>";
+    private const string DiffXmlB =
+        "<EliteCZResult xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Ico>00177041</Ico><UnReliability xsi:nil=\"true\"/>"
+        + "<Contacts><Contact><Contact>326817192</Contact><Type>Phone</Type></Contact></Contacts>"
+        + "<OtherCzNaces><CzNace><Code>29</Code><Text>Výroba</Text></CzNace></OtherCzNaces>"
+        + "<Offices><Count>4</Count></Offices><New>1</New></EliteCZResult>";
+
+    private void PopulateDiff()
+    {
+        var viewer = this.FindControl<JsonDiffViewer>("DemoDiff")!;
+        var a = this.FindControl<TextBox>("DiffSideA")!;
+        var b = this.FindControl<TextBox>("DiffSideB")!;
+        var format = this.FindControl<ComboBox>("DiffFormat")!;
+        viewer.Options = new Birko.Xaml.Core.Diff.JsonDiffOptions
+        {
+            Ignore = ["Url"],
+            Arrays = [new Birko.Xaml.Core.Diff.JsonArrayRule("Items") { Key = "Id" }],
+        };
+
+        void Load(string sideA, string sideB, int formatIndex)
+        {
+            format.SelectedIndex = formatIndex;
+            a.Text = sideA;
+            b.Text = sideB;
+        }
+
+        a.TextChanged += (_, _) => viewer.RawA = a.Text;
+        b.TextChanged += (_, _) => viewer.RawB = b.Text;
+        format.SelectionChanged += (_, _) => viewer.Format = format.SelectedIndex == 1 ? JsonDiffFormat.Xml : JsonDiffFormat.Json;
+        this.FindControl<Button>("DiffJsonSample")!.Click += (_, _) => Load(DiffJsonA, DiffJsonB, 0);
+        this.FindControl<Button>("DiffXmlSample")!.Click += (_, _) => Load(DiffXmlA, DiffXmlB, 1);
+        Load(DiffJsonA, DiffJsonB, 0);
     }
 
     private void PopulateComposites()
