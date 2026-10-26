@@ -58,6 +58,7 @@ public partial class GalleryView : UserControl
     {
         AvaloniaXamlLoader.Load(this);
         PopulateForms();
+        PopulateTags();
         PopulateViewers();
         PopulateComposites();
         PopulateChrome();
@@ -160,6 +161,17 @@ public partial class GalleryView : UserControl
         + "<Contacts><Contact><Contact>326817192</Contact><Type>Phone</Type></Contact></Contacts>"
         + "<OtherCzNaces><CzNace><Code>29</Code><Text>Výroba</Text></CzNace></OtherCzNaces>"
         + "<Offices><Count>4</Count></Offices><New>1</New></EliteCZResult>";
+
+    // FEATURE-020 / TASK-774: TagInput as the FinStat tester uses it, a list of IČOs; the last event is shown below it.
+    private void PopulateTags()
+    {
+        var tags = this.FindControl<TagInput>("DemoTags")!;
+        var log = this.FindControl<TextBlock>("DemoTagsLog")!;
+        tags.Separators = ",; \n\t";
+        tags.TagAdded += (_, e) => log.Text = $"added {e.Tag} — {e.Tags.Count} tag(s)";
+        tags.TagRemoved += (_, e) => log.Text = $"removed {e.Tag} — {e.Tags.Count} tag(s)";
+        tags.TagRejected += (_, e) => log.Text = $"refused {e.Tag}: {(e.Reason == TagRejectReason.Duplicate ? "duplicate" : "max count")}";
+    }
 
     private void PopulateDiff()
     {

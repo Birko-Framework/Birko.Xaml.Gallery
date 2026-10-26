@@ -90,6 +90,15 @@
               <TextBlock Text="Schema-driven form" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
               <ContentControl Theme="{StaticResource BCard}"><c:Form x:Name="DemoForm" /></ContentControl>
 
+              <TextBlock Text="Tag input (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <ContentControl Theme="{StaticResource BCard}">
+                <StackPanel Spacing="6">
+                  <TextBlock Text="Up to 5 IČOs; comma, semicolon, space or newline ends one. A duplicate or a sixth is refused." Foreground="{DynamicResource BTextMutedBrush}" TextWrapping="Wrap" />
+                  <c:TagInput x:Name="DemoTags" Placeholder="IČO" MaxCount="5" />
+                  <TextBlock x:Name="DemoTagsLog" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                </StackPanel>
+              </ContentControl>
+
               <TextBlock Text="Data grid" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
               <ContentControl Theme="{StaticResource BCard}" Padding="0">
                 <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150" IsReadOnly="True" GridLinesVisibility="Horizontal">
