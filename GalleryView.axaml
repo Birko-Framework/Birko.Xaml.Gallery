@@ -167,6 +167,22 @@
         <TabItem Header="Composites">
           <ScrollViewer>
             <StackPanel Spacing="16" Margin="0,12,0,0">
+              <TextBlock Text="Expander — the b-accordion look (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
+              <StackPanel Spacing="8">
+                <Expander Header="Production — 31 differences" IsExpanded="True">
+                  <TextBlock Text="Items[2].Revenue: 1000 → 1007" Foreground="{DynamicResource BTextBrush}" />
+                </Expander>
+                <Expander Header="Test — equal">
+                  <TextBlock Text="No differences" Foreground="{DynamicResource BTextMutedBrush}" />
+                </Expander>
+                <Expander Header="Opens upward" ExpandDirection="Up">
+                  <TextBlock Text="The header moves below the panel." Foreground="{DynamicResource BTextBrush}" />
+                </Expander>
+                <Expander Header="Disabled section" IsEnabled="False">
+                  <TextBlock Text="Not reachable" />
+                </Expander>
+              </StackPanel>
+
               <TextBlock Text="Kanban" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
               <c:Kanban x:Name="DemoKanban" Height="220" />
 
