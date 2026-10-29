@@ -64,14 +64,95 @@ public partial class GalleryView : UserControl
         PopulateChrome();
         PopulateOverlays();
         PopulateMobileShell();
+        SetupAppRibbon();
     }
 
-    // ── Theme switch ──
-    private void OnTheme(object? sender, RoutedEventArgs e)
+    // ── The header ribbon (TASK-783) ──
+    // Gallery picks a section, Appearance the theme, Help the About and the links — the Birko.Web.Playground's layout,
+    // so the two galleries read alike. Sections are the StackPanels under #Sections, each Tag'd with its id.
+
+    private static readonly (string Id, string Label, string Icon, string About)[] SectionList =
     {
-        if (sender is Button { Tag: string id })
-            _themes.SetTheme(id);
+        ("controls", "Controls", "⌨", "Buttons, inputs, choices, progress, menus, breadcrumbs and sliders."),
+        ("forms", "Forms & data", "▤", "A schema-driven form, a tag input, a data grid and a tree."),
+        ("viewers", "Viewers", "🔍", "Object and XML trees, the JSON / XML diff and a Markdown editor."),
+        ("composites", "Composites", "▦", "Expanders, a kanban board and charts."),
+        ("chrome", "Chrome", "▭", "The ribbon on its own, with its looks to try."),
+        ("overlays", "Overlays", "❐", "Modal, form modal, drawer and the Ctrl+K command palette."),
+        ("mobile", "Mobile shell", "📱", "The phone shell: top bar and bottom navigation."),
+    };
+
+    private static readonly (string Id, string Label, string Url, string Icon, string About)[] HelpLinks =
+    {
+        ("source", "Source", "https://github.com/Birko-Framework/Birko.Framework/tree/main/Birko.Xaml.Avalonia", "⌥",
+            "Birko.Xaml.Core, .Avalonia and .Shell on GitHub."),
+        ("guide", "Guide", "https://github.com/Birko-Framework/Birko.Framework/wiki/Desktop-XAML", "📖",
+            "How to use Birko.Xaml in an app, on the framework wiki."),
+        ("web", "Web gallery", "https://birko-framework.github.io/Birko.Web.Playground/", "🌐",
+            "The same design system on the web: Birko.Web's live component gallery."),
+        ("downloads", "Downloads", "https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest", "⤓",
+            "This gallery for Windows, macOS and Linux, built on every change."),
+    };
+
+    private void SetupAppRibbon()
+    {
+        var ribbon = this.FindControl<Ribbon>("AppRibbon")!;
+        ribbon.Tabs = new[]
+        {
+            new RibbonTab { Id = "gallery", Label = "Gallery", Groups = new[]
+            {
+                new RibbonGroup { Label = "Section", Icon = "▦", Items = SectionList.Select((s, i) => new RibbonItem
+                {
+                    Id = $"sec:{s.Id}", Label = s.Label, Icon = s.Icon, Description = s.About,
+                    ToggleGroup = "section", Pressed = i == 0, Run = () => ShowSection(s.Id),
+                }).ToArray() },
+            }},
+            new RibbonTab { Id = "appearance", Label = "Appearance", Groups = new[]
+            {
+                new RibbonGroup { Label = "Theme", Icon = "🎨", Items = _themes.Available.Select(th => new RibbonItem
+                {
+                    Id = $"theme:{th.Id}", Label = th.Label, Icon = th.Icon ?? (th.IsDark ? "☾" : "☀"),
+                    Description = th.IsDark ? "A dark theme, generated from tokens.json." : "A light theme, generated from tokens.json.",
+                    ToggleGroup = "theme", Pressed = th.Id == _themes.Current.Id, Run = () => _themes.SetTheme(th.Id),
+                }).ToArray() },
+            }},
+            new RibbonTab { Id = "help", Label = "Help", Groups = new[]
+            {
+                new RibbonGroup { Label = "Start", Icon = "ℹ", Items = new[]
+                {
+                    new RibbonItem { Id = "about", Label = "About", Icon = "ℹ", Description = "What this gallery is and how to read it.",
+                        Run = () => this.FindControl<Modal>("AboutModal")!.IsOpen = true },
+                } },
+                new RibbonGroup { Label = "Links", Icon = "🔗", Items = HelpLinks.Select(l => new RibbonItem
+                {
+                    Id = l.Id, Label = l.Label, Icon = l.Icon, Description = l.About, Run = () => OpenUrl(l.Url),
+                }).ToArray() },
+            }},
+        };
+        // A theme picked elsewhere (the command palette's "Toggle theme") still moves the pressed button.
+        _themes.ThemeChanged += th => ribbon.SetPressed($"theme:{th.Id}", true, "appearance");
     }
+
+    /// <summary>Shows one section; also used by <c>--screenshots</c> to render each in turn.</summary>
+    public void ShowSection(string id)
+    {
+        foreach (var child in this.FindControl<Panel>("Sections")!.Children)
+            child.IsVisible = Equals(child.Tag, id);
+        this.FindControl<ScrollViewer>("Body")!.Offset = default;
+        this.FindControl<Ribbon>("AppRibbon")!.SetPressed($"sec:{id}", true, "gallery");
+    }
+
+    public static IEnumerable<string> SectionIds => SectionList.Select(s => s.Id);
+
+    public IThemeManager Themes => _themes;
+
+    private void OpenUrl(string url)
+    {
+        if (TopLevel.GetTopLevel(this) is { } top) _ = top.Launcher.LaunchUriAsync(new Uri(url));
+    }
+
+    private void OnCloseAbout(object? sender, RoutedEventArgs e) =>
+        this.FindControl<Modal>("AboutModal")!.IsOpen = false;
 
     // ── Ctrl+K opens the palette ──
     protected override void OnKeyDown(KeyEventArgs e)

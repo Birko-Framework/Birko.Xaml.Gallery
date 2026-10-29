@@ -1,0 +1,127 @@
+# Build the Birko.Xaml gallery on every push, and publish it as the rolling "latest" release (TASK-783).
+#
+# WHY: the gallery is a desktop app, so unlike Birko.Web.Playground there is no page to open — a visitor needs a build.
+# Every push produces self-contained builds for Windows, Linux and macOS (no .NET install needed) and screenshots of
+# every section, and replaces the "latest" release with them. The wiki and https://birko-framework.github.io/ link to
+# releases/latest/download/<asset>, so those links always serve the newest build and the newest screenshots.
+#
+# The gallery references Birko.Xaml.* by ProjectReference ../../Framework/..., so the framework is checked out beside it
+# in the same Birko/Consumers + Birko/Framework layout the developers use.
+#
+# The builds are NOT code-signed: Windows SmartScreen and macOS Gatekeeper warn on first start (the release notes say
+# how to open them anyway).
+
+name: build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gallery-release
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: win-x64,   os: windows-latest }
+          - { rid: linux-x64, os: ubuntu-latest }
+          - { rid: osx-arm64, os: macos-latest }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: birko/Consumers/Birko.Xaml.Gallery
+      - uses: actions/checkout@v4
+        with:
+          repository: Birko-Framework/Birko.Framework
+          path: birko/Framework
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish (self-contained, single file)
+        shell: bash
+        run: |
+          dotnet publish birko/Consumers/Birko.Xaml.Gallery/Birko.Xaml.Gallery.csproj -c Release -r ${{ matrix.rid }} \
+            --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true -p:DebugType=none -o out/Birko.Xaml.Gallery --nologo
+
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p dist
+          cd out
+          case "${{ matrix.rid }}" in
+            win-*)   7z a -tzip ../dist/Birko.Xaml.Gallery-${{ matrix.rid }}.zip Birko.Xaml.Gallery >/dev/null ;;
+            linux-*) tar -czf ../dist/Birko.Xaml.Gallery-${{ matrix.rid }}.tar.gz Birko.Xaml.Gallery ;;
+            # ditto keeps the executable bit, which a plain zip loses on macOS.
+            osx-*)   ditto -c -k --keepParent Birko.Xaml.Gallery ../dist/Birko.Xaml.Gallery-${{ matrix.rid }}.zip ;;
+          esac
+          ls -la ../dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gallery-${{ matrix.rid }}
+          path: dist/*
+          if-no-files-found: error
+
+  screenshots:
+    # Windows: the same renderer the developers check by eye, and the one the framework's headless tests run on.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: birko/Consumers/Birko.Xaml.Gallery
+      - uses: actions/checkout@v4
+        with:
+          repository: Birko-Framework/Birko.Framework
+          path: birko/Framework
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Render every section headlessly
+        shell: bash
+        run: dotnet run --project birko/Consumers/Birko.Xaml.Gallery/Birko.Xaml.Gallery.csproj -c Release -- --screenshots shots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gallery-screenshots
+          path: shots/*.png
+          if-no-files-found: error
+
+  release:
+    needs: [build, screenshots]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+      - name: Replace the "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ls -la assets
+          cat > notes.md <<EOF
+          The newest build of the Birko.Xaml gallery, from commit ${GITHUB_SHA::7}. Rebuilt on every push.
+
+          | System | Download |
+          |---|---|
+          | Windows x64 | \`Birko.Xaml.Gallery-win-x64.zip\` — unzip, run \`Birko.Xaml.Gallery.exe\` |
+          | Linux x64 | \`Birko.Xaml.Gallery-linux-x64.tar.gz\` — \`tar -xzf\`, run \`./Birko.Xaml.Gallery/Birko.Xaml.Gallery\` |
+          | macOS (Apple Silicon) | \`Birko.Xaml.Gallery-osx-arm64.zip\` — unzip, then in Terminal: \`xattr -dr com.apple.quarantine Birko.Xaml.Gallery && ./Birko.Xaml.Gallery/Birko.Xaml.Gallery\` |
+
+          Self-contained: no .NET install needed. Not code-signed, so Windows SmartScreen warns the first time ("More info →
+          Run anyway") and macOS refuses it until the quarantine flag is cleared as above. The \`gallery-*.png\` files are
+          screenshots of this build.
+          EOF
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest assets/* --title "Gallery — latest build" --notes-file notes.md --target "$GITHUB_SHA" --latest

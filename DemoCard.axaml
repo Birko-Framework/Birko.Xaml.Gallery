@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Birko.Xaml.Gallery">
+
+  <!-- A gallery card (DemoCard.cs): title + type, the ABOUT line, the ⓘ (its tooltip is built in code), the live demo.
+       Every colour, radius and font is a Birko token, so the cards re-theme with the controls in them. -->
+  <ControlTheme x:Key="{x:Type local:DemoCard}" TargetType="local:DemoCard">
+    <Setter Property="Width" Value="380" />
+    <Setter Property="Margin" Value="0,0,16,16" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="{DynamicResource BBgBrush}" BorderBrush="{DynamicResource BBorderBrush}" BorderThickness="1"
+                CornerRadius="{DynamicResource BRadiusLg}" Padding="16">
+          <DockPanel>
+            <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+              <WrapPanel VerticalAlignment="Center">
+                <TextBlock Text="{TemplateBinding Title}" FontSize="15" FontWeight="SemiBold" Margin="0,0,8,0"
+                           Foreground="{DynamicResource BTextBrush}" />
+                <TextBlock Text="{TemplateBinding TypeName}" FontFamily="{DynamicResource BFontMono}" FontSize="12"
+                           VerticalAlignment="Center" Foreground="{DynamicResource BColorPrimaryBrush}" />
+              </WrapPanel>
+              <Button Name="PART_Info" Grid.Column="1" Content="ⓘ" Padding="0" Width="26" Height="26"
+                      Background="Transparent" BorderThickness="1" BorderBrush="{DynamicResource BBorderBrush}"
+                      CornerRadius="{DynamicResource BRadiusFull}" Foreground="{DynamicResource BTextSecondaryBrush}"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Cursor="Help" />
+            </Grid>
+            <TextBlock DockPanel.Dock="Top" Text="{TemplateBinding About}" TextWrapping="Wrap" FontSize="13"
+                       Margin="0,4,0,12" Foreground="{DynamicResource BTextSecondaryBrush}" />
+            <Border Background="{DynamicResource BBgSecondaryBrush}" CornerRadius="{DynamicResource BRadius}"
+                    Padding="16" MinHeight="72">
+              <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                VerticalAlignment="Center" />
+            </Border>
+          </DockPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+
+    <!-- A wide card takes the whole row (a data grid, a diff, a ribbon): squeezed into 380px it shows its fallback. -->
+    <Style Selector="^.wide">
+      <Setter Property="Width" Value="NaN" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Margin" Value="0,0,16,16" />
+    </Style>
+  </ControlTheme>
+
+</ResourceDictionary>

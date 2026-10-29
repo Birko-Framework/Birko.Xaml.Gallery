@@ -2,6 +2,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Birko.Xaml.Gallery"
         x:Class="Birko.Xaml.Gallery.MainWindow"
-        Title="Birko.Xaml Gallery" Width="520" Height="600">
+        Title="Birko.Xaml Gallery" Width="1280" Height="820" MinWidth="720" MinHeight="520" WindowStartupLocation="CenterScreen">
   <local:GalleryView />
 </Window>

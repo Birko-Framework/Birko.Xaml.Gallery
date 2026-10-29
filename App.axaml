@@ -11,6 +11,8 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="avares://Birko.Xaml.Avalonia/BirkoTheme.axaml" />
+        <!-- The gallery's own card (TASK-783). -->
+        <ResourceInclude Source="avares://Birko.Xaml.Gallery/DemoCard.axaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

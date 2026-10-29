@@ -2,61 +2,96 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:Birko.Xaml.Avalonia.Controls;assembly=Birko.Xaml.Avalonia"
              xmlns:sv="clr-namespace:Birko.Xaml.Shell.Views;assembly=Birko.Xaml.Shell"
+             xmlns:local="clr-namespace:Birko.Xaml.Gallery"
              x:Class="Birko.Xaml.Gallery.GalleryView"
              x:CompileBindings="False"
              FontFamily="{DynamicResource BFont}"
              Background="{DynamicResource BBgSecondaryBrush}">
 
+  <!-- TASK-783: laid out like Birko.Web.Playground — a Birko Ribbon as the header (Gallery picks a section, Appearance
+       the theme, Help the About and the links), and every control in a card that says what it is (DemoCard). -->
   <Panel>
-    <DockPanel Margin="20">
+    <DockPanel>
 
-      <!-- Header: title + theme switcher -->
-      <StackPanel DockPanel.Dock="Top" Spacing="10" Margin="0,0,0,12">
-        <TextBlock Text="Birko.Xaml — control gallery" FontSize="24" FontWeight="Bold"
-                   Foreground="{DynamicResource BTextBrush}" />
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Button Content="Light" Tag="light" Click="OnTheme" />
-          <Button Content="Dark" Tag="dark" Click="OnTheme" />
-          <Button Content="Neon" Tag="neon" Click="OnTheme" />
-          <Button Content="Finstat" Tag="finstat" Click="OnTheme" />
-        </StackPanel>
-      </StackPanel>
-
-      <!-- TabNavigation=Continue so Tab actually walks INTO the selected tab's content. Avalonia's default
-           for TabControl is Once: Tab visits the selected header and then skips the content, so a
-           keyboard-only user could never reach anything inside a tab (found while doing TASK-100's
-           keyboard pass — a gallery-configuration issue, not a control defect). -->
-      <TabControl KeyboardNavigation.TabNavigation="Continue">
-
-        <!-- ── Controls ─────────────────────────────────────────────── -->
-        <TabItem Header="Controls">
-          <ScrollViewer>
-            <StackPanel Spacing="16" Margin="0,12,0,0">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <Button Content="Primary" />
-                <Button Content="With tooltip" ToolTip.Tip="A themed tooltip" />
-                <ContentControl Theme="{StaticResource BBadge}" Content="NEW" FontSize="12" />
-                <ContentControl Theme="{StaticResource BTag}" Content="draft" FontSize="12" />
+      <!-- The header is Birko's own Ribbon, dogfooded. Ctrl+F1 and the Alt key tips are off here: both are
+           window-wide, and the Chrome section's demo ribbon is the one demonstrating them. -->
+      <Border DockPanel.Dock="Top" Background="{DynamicResource BBgBrush}"
+              BorderBrush="{DynamicResource BBorderBrush}" BorderThickness="0,0,0,1">
+        <c:Ribbon x:Name="AppRibbon" IsPinned="True" CollapseShortcut="{x:Null}" KeyTipKey="None">
+          <c:Ribbon.LeadingContent>
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="8,0,12,0" VerticalAlignment="Center">
+              <Border Width="26" Height="26" CornerRadius="{DynamicResource BRadius}" Background="{DynamicResource BColorPrimaryBrush}">
+                <TextBlock Text="B" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BTextOnPrimaryBrush}" />
+              </Border>
+              <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Birko.Xaml" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource BTextBrush}" />
+                <TextBlock Text="Gallery" FontSize="11" Foreground="{DynamicResource BTextSecondaryBrush}" />
               </StackPanel>
+            </StackPanel>
+          </c:Ribbon.LeadingContent>
+        </c:Ribbon>
+      </Border>
 
-              <TextBox Text="Editable input" Width="300" HorizontalAlignment="Left" />
-              <ComboBox Width="300" HorizontalAlignment="Left" SelectedIndex="0">
-                <ComboBoxItem Content="First option" />
-                <ComboBoxItem Content="Second option" />
-                <ComboBoxItem Content="Third option" />
-              </ComboBox>
+      <ScrollViewer x:Name="Body">
+        <Panel x:Name="Sections" Margin="24,20,8,8">
 
-              <StackPanel Orientation="Horizontal" Spacing="20">
-                <CheckBox Content="Checkbox" IsChecked="True" />
-                <RadioButton Content="Option A" IsChecked="True" GroupName="g" />
-                <RadioButton Content="Option B" GroupName="g" />
-                <ToggleSwitch Content="Notifications" IsChecked="True" />
-              </StackPanel>
-
-              <StackPanel Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
-                <ProgressBar Value="60" Maximum="100" Width="200" />
-                <c:BusySpinner />
-                <Button Content="Actions ▾">
+          <!-- ── Controls ─────────────────────────────────────────────── -->
+          <StackPanel x:Name="SecControls" Tag="controls">
+            <WrapPanel>
+              <local:DemoCard Title="Button" TypeName="Button" WebTwin="b-button"
+                              About="The standard action button; a tooltip shows on hover and keyboard focus."
+                              Source="Avalonia's Button, restyled by the Birko tokens">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Button Content="Primary" />
+                  <Button Content="With tooltip" ToolTip.Tip="A themed tooltip" />
+                </StackPanel>
+              </local:DemoCard>
+              <local:DemoCard Title="Badge and tag" TypeName="BBadge · BTag" WebTwin="b-badge, b-tag"
+                              About="Small status labels: a badge for a state, a tag for a category."
+                              Source="ControlThemes in Birko.Xaml.Avalonia, applied to a ContentControl">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <ContentControl Theme="{StaticResource BBadge}" Content="NEW" FontSize="12" />
+                  <ContentControl Theme="{StaticResource BTag}" Content="draft" FontSize="12" />
+                </StackPanel>
+              </local:DemoCard>
+              <local:DemoCard Title="Text box" TypeName="TextBox" WebTwin="b-input"
+                              About="A text field with a watermark, selection and password masking."
+                              Source="Avalonia's TextBox, with the Birko template">
+                <TextBox Text="Editable input" />
+              </local:DemoCard>
+              <local:DemoCard Title="Combo box" TypeName="ComboBox" WebTwin="b-select"
+                              About="Pick one value from a dropdown list."
+                              Source="Avalonia's ComboBox, restyled by the Birko tokens">
+                <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch">
+                  <ComboBoxItem Content="First option" />
+                  <ComboBoxItem Content="Second option" />
+                  <ComboBoxItem Content="Third option" />
+                </ComboBox>
+              </local:DemoCard>
+              <local:DemoCard Title="Choices" TypeName="CheckBox · RadioButton · ToggleSwitch"
+                              WebTwin="b-checkbox, b-radio, b-switch"
+                              About="On/off and one-of choices, and a switch for settings that apply at once."
+                              Source="Avalonia's controls, restyled by the Birko tokens">
+                <WrapPanel>
+                  <CheckBox Content="Checkbox" IsChecked="True" Margin="0,0,16,4" />
+                  <RadioButton Content="Option A" IsChecked="True" GroupName="g" Margin="0,0,16,4" />
+                  <RadioButton Content="Option B" GroupName="g" Margin="0,0,16,4" />
+                  <ToggleSwitch Content="Notifications" IsChecked="True" />
+                </WrapPanel>
+              </local:DemoCard>
+              <local:DemoCard Title="Progress and busy" TypeName="ProgressBar · c:BusySpinner" WebTwin="b-progress, b-spinner"
+                              About="How far along something is, or that something is still running."
+                              Source="Avalonia's ProgressBar and Birko's BusySpinner">
+                <StackPanel Orientation="Horizontal" Spacing="20">
+                  <ProgressBar Value="60" Maximum="100" Width="180" VerticalAlignment="Center" />
+                  <c:BusySpinner />
+                </StackPanel>
+              </local:DemoCard>
+              <local:DemoCard Title="Dropdown menu" TypeName="Button + MenuFlyout" WebTwin="b-dropdown-menu"
+                              About="A button that opens a menu of actions."
+                              Source="Avalonia's MenuFlyout, restyled by the Birko tokens">
+                <Button Content="Actions ▾" HorizontalAlignment="Left">
                   <Button.Flyout>
                     <MenuFlyout>
                       <MenuItem Header="Edit" />
@@ -65,53 +100,45 @@
                     </MenuFlyout>
                   </Button.Flyout>
                 </Button>
-              </StackPanel>
-
-              <c:Breadcrumb x:Name="DemoCrumb" />
-              <TextBlock x:Name="DemoCrumbStatus" FontSize="12" Opacity="0.7" />
-
-              <!-- Slider (TASK-054): horizontal + a vertical equalizer bank -->
-              <Slider Minimum="0" Maximum="100" Value="60" Width="240" HorizontalAlignment="Left" />
-              <StackPanel Orientation="Horizontal" Spacing="16" Height="150">
-                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="30" />
-                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="55" />
-                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="80" />
-                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="45" />
-                <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="65" />
-              </StackPanel>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
-
-        <!-- ── Forms & data ─────────────────────────────────────────── -->
-        <TabItem Header="Forms &amp; data">
-          <ScrollViewer>
-            <StackPanel Spacing="16" Margin="0,12,0,0">
-              <TextBlock Text="Schema-driven form" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}"><c:Form x:Name="DemoForm" /></ContentControl>
-
-              <TextBlock Text="Tag input (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}">
+              </local:DemoCard>
+              <local:DemoCard Title="Breadcrumb" TypeName="c:Breadcrumb" WebTwin="b-breadcrumb"
+                              About="Where you are, as a trail; the links report where they lead."
+                              Source="Birko.Xaml.Avalonia">
                 <StackPanel Spacing="6">
-                  <TextBlock Text="Up to 5 IČOs; comma, semicolon, space or newline ends one. A duplicate or a sixth is refused." Foreground="{DynamicResource BTextMutedBrush}" TextWrapping="Wrap" />
-                  <c:TagInput x:Name="DemoTags" Placeholder="IČO" MaxCount="5" />
-                  <TextBlock x:Name="DemoTagsLog" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                  <c:Breadcrumb x:Name="DemoCrumb" />
+                  <TextBlock x:Name="DemoCrumbStatus" FontSize="12" Opacity="0.7" />
                 </StackPanel>
-              </ContentControl>
+              </local:DemoCard>
+              <local:DemoCard Title="Slider" TypeName="Slider" WebTwin="b-range"
+                              About="Pick a number on a track; vertical sliders make an equalizer."
+                              Source="Avalonia's Slider, restyled by the Birko tokens">
+                <StackPanel Orientation="Horizontal" Spacing="24">
+                  <Slider Minimum="0" Maximum="100" Value="60" Width="140" VerticalAlignment="Center" />
+                  <StackPanel Orientation="Horizontal" Spacing="12" Height="110">
+                    <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="30" />
+                    <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="55" />
+                    <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="80" />
+                    <Slider Orientation="Vertical" Minimum="0" Maximum="100" Value="45" />
+                  </StackPanel>
+                </StackPanel>
+              </local:DemoCard>
+            </WrapPanel>
+          </StackPanel>
 
-              <TextBlock Text="Data grid" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}" Padding="0">
-                <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150" IsReadOnly="True" GridLinesVisibility="Horizontal">
-                  <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*" />
-                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
-                    <DataGridTextColumn Header="Plan" Binding="{Binding Plan}" Width="Auto" />
-                  </DataGrid.Columns>
-                </DataGrid>
-              </ContentControl>
-
-              <TextBlock Text="Tree menu" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}">
+          <!-- ── Forms & data ─────────────────────────────────────────── -->
+          <StackPanel x:Name="SecForms" Tag="forms" IsVisible="False">
+            <WrapPanel>
+              <local:DemoCard Title="Tag input" TypeName="c:TagInput" WebTwin="b-tag-input"
+                              About="Type free-form tags; comma, semicolon, space or newline ends one; a duplicate or a sixth is refused."
+                              Source="Birko.Xaml.Avalonia">
+                <StackPanel Spacing="6">
+                  <c:TagInput x:Name="DemoTags" Placeholder="IČO" MaxCount="5" />
+                  <TextBlock x:Name="DemoTagsLog" TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                </StackPanel>
+              </local:DemoCard>
+              <local:DemoCard Title="Tree" TypeName="TreeView" WebTwin="b-tree-menu"
+                              About="A nested list that expands and collapses."
+                              Source="Avalonia's TreeView, restyled by the Birko tokens">
                 <TreeView>
                   <TreeViewItem Header="Reports" IsExpanded="True">
                     <TreeViewItem Header="Sales" />
@@ -123,170 +150,211 @@
                   </TreeViewItem>
                   <TreeViewItem Header="Settings" />
                 </TreeView>
-              </ContentControl>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
+              </local:DemoCard>
+            </WrapPanel>
+            <local:DemoCard Classes="wide" Title="Form" TypeName="c:Form" WebTwin="b-form"
+                            About="A form built from a list of fields: text, password, number, dates, choices, tags and files, with validation."
+                            Source="Birko.Xaml.Avalonia, fed by Birko.Xaml.Core FormField definitions">
+              <c:Form x:Name="DemoForm" />
+            </local:DemoCard>
+            <local:DemoCard Classes="wide" Title="Data grid" TypeName="DataGrid" WebTwin="b-table"
+                            About="Rows and columns with sorting and selection."
+                            Source="Avalonia's DataGrid, with Birko's DataGridStyles">
+              <DataGrid x:Name="DemoGrid" AutoGenerateColumns="False" Height="150" IsReadOnly="True" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*" />
+                  <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" />
+                  <DataGridTextColumn Header="Plan" Binding="{Binding Plan}" Width="Auto" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </local:DemoCard>
+          </StackPanel>
 
-        <!-- ── Viewers ──────────────────────────────────────────────── -->
-        <TabItem Header="Viewers">
-          <ScrollViewer>
-            <StackPanel Spacing="16" Margin="0,12,0,0">
-              <TextBlock Text="JSON / object viewer" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}"><c:ObjectTree x:Name="DemoJson" /></ContentControl>
+          <!-- ── Viewers ──────────────────────────────────────────────── -->
+          <StackPanel x:Name="SecViewers" Tag="viewers" IsVisible="False">
+            <WrapPanel>
+              <local:DemoCard Title="Object tree" TypeName="c:ObjectTree" WebTwin="b-object-tree, b-json-viewer"
+                              About="Any value — here parsed JSON — as an expandable property tree."
+                              Source="Birko.Xaml.Avalonia">
+                <c:ObjectTree x:Name="DemoJson" />
+              </local:DemoCard>
+              <local:DemoCard Title="XML viewer" TypeName="c:XmlViewer" WebTwin="b-xml-viewer"
+                              About="XML as a collapsible, coloured tree."
+                              Source="Birko.Xaml.Avalonia">
+                <c:XmlViewer x:Name="DemoXml" />
+              </local:DemoCard>
+            </WrapPanel>
+            <local:DemoCard Classes="wide" Title="JSON / XML diff" TypeName="c:JsonDiffViewer" WebTwin="b-json-diff"
+                            About="Compare two JSON or XML bodies as a tree of changes or side by side; edit either side to see it update."
+                            Source="Birko.Xaml.Avalonia over the Birko.Xaml.Core.Diff engine, which runs the web engine's test vectors">
+              <StackPanel Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Button x:Name="DiffJsonSample" Content="JSON sample" />
+                  <Button x:Name="DiffXmlSample" Content="XML sample" />
+                  <ComboBox x:Name="DiffFormat" SelectedIndex="0" MinWidth="100">
+                    <ComboBoxItem Content="JSON" />
+                    <ComboBoxItem Content="XML" />
+                  </ComboBox>
+                </StackPanel>
+                <Grid ColumnDefinitions="*,8,*">
+                  <TextBox x:Name="DiffSideA" Grid.Column="0" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="production" />
+                  <TextBox x:Name="DiffSideB" Grid.Column="2" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="localhost" />
+                </Grid>
+                <c:JsonDiffViewer x:Name="DemoDiff" LabelA="production" LabelB="localhost" Height="320" />
+              </StackPanel>
+            </local:DemoCard>
+            <local:DemoCard Classes="wide" Title="Markdown editor" TypeName="c:MarkdownEditor" WebTwin="b-markdown-editor"
+                            About="Write Markdown with a toolbar and see it rendered beside it."
+                            Source="Birko.Xaml.Avalonia">
+              <c:MarkdownEditor x:Name="DemoMarkdown" Height="240" />
+            </local:DemoCard>
+          </StackPanel>
 
-              <TextBlock Text="XML viewer" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}"><c:XmlViewer x:Name="DemoXml" /></ContentControl>
-
-              <TextBlock Text="JSON / XML diff (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}">
+          <!-- ── Composites ───────────────────────────────────────────── -->
+          <StackPanel x:Name="SecComposites" Tag="composites" IsVisible="False">
+            <WrapPanel>
+              <local:DemoCard Title="Expander" TypeName="Expander" WebTwin="b-accordion"
+                              About="Sections that open and close, in the b-accordion look; it can open upward."
+                              Source="Avalonia's Expander, with the Birko theme">
                 <StackPanel Spacing="8">
-                  <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Button x:Name="DiffJsonSample" Content="JSON sample" />
-                    <Button x:Name="DiffXmlSample" Content="XML sample" />
-                    <ComboBox x:Name="DiffFormat" SelectedIndex="0" MinWidth="100">
-                      <ComboBoxItem Content="JSON" />
-                      <ComboBoxItem Content="XML" />
+                  <Expander Header="Production — 31 differences" IsExpanded="True" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Items[2].Revenue: 1000 → 1007" Foreground="{DynamicResource BTextBrush}" />
+                  </Expander>
+                  <Expander Header="Test — equal" HorizontalAlignment="Stretch">
+                    <TextBlock Text="No differences" Foreground="{DynamicResource BTextMutedBrush}" />
+                  </Expander>
+                  <Expander Header="Opens upward" ExpandDirection="Up" HorizontalAlignment="Stretch">
+                    <TextBlock Text="The header moves below the panel." Foreground="{DynamicResource BTextBrush}" />
+                  </Expander>
+                  <Expander Header="Disabled section" IsEnabled="False" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Not reachable" />
+                  </Expander>
+                </StackPanel>
+              </local:DemoCard>
+            </WrapPanel>
+            <local:DemoCard Classes="wide" Title="Kanban" TypeName="c:Kanban" WebTwin="b-kanban"
+                            About="A board of columns; drag cards between them."
+                            Source="Birko.Xaml.Avalonia, fed by Birko.Xaml.Core KanbanColumn and KanbanCard">
+              <c:Kanban x:Name="DemoKanban" Height="220" />
+            </local:DemoCard>
+            <local:DemoCard Classes="wide" Title="Chart" TypeName="c:BChart" WebTwin="b-chart"
+                            About="Line, bar and pie charts in the theme's colours."
+                            Source="Birko.Xaml.Avalonia over LiveCharts2">
+              <c:BChart x:Name="DemoChart" Height="260" />
+            </local:DemoCard>
+          </StackPanel>
+
+          <!-- ── Chrome ───────────────────────────────────────────────── -->
+          <StackPanel x:Name="SecChrome" Tag="chrome" IsVisible="False">
+            <local:DemoCard Classes="wide" Title="Ribbon" TypeName="c:Ribbon" WebTwin="b-ribbon"
+                            About="An Office-style ribbon: tabs, groups, split buttons, toggles, galleries, inputs, contextual tabs, a Quick Access Toolbar and key tips (Alt). The header above is one too."
+                            Source="Birko.Xaml.Avalonia; RibbonShellView wraps it in a full app shell">
+              <StackPanel Spacing="12">
+                <Border BorderThickness="1" BorderBrush="{DynamicResource BBorderBrush}"
+                        CornerRadius="{DynamicResource BRadius}" Background="{DynamicResource BBgBrush}">
+                  <c:Ribbon x:Name="DemoRibbon" />
+                </Border>
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
+                           Text="Resize the window to watch it scale like Office: groups shrink to small buttons, then to one ▾ button each, in priority order — Export first, Clipboard last; narrower still the whole ribbon becomes ☰." />
+                <WrapPanel>
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,24,8">
+                    <TextBlock Text="Pin mode:" VerticalAlignment="Center" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                    <Button Name="DemoRibbonPinToggle" Click="OnToggleRibbonPin" Content="Unpin the ribbon" />
+                    <TextBlock Name="DemoRibbonPinState" VerticalAlignment="Center" Foreground="{DynamicResource BTextMutedBrush}"
+                               Text="pinned — the body sits in the layout" />
+                  </StackPanel>
+                  <!-- Contextual tabs (TASK-760): "select a table" shows the Table Tools set, in the look picked here. -->
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,24,8">
+                    <TextBlock Text="Contextual tabs:" VerticalAlignment="Center" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                    <CheckBox Name="DemoRibbonTableSelected" Content="A table is selected" IsCheckedChanged="OnRibbonTableSelected" />
+                    <ComboBox Name="DemoRibbonContextualStyle" SelectedIndex="0" SelectionChanged="OnRibbonContextualStyle">
+                      <ComboBoxItem Content="Band" />
+                      <ComboBoxItem Content="Pill" />
+                      <ComboBoxItem Content="Edge" />
                     </ComboBox>
                   </StackPanel>
-                  <Grid ColumnDefinitions="*,8,*">
-                    <TextBox x:Name="DiffSideA" Grid.Column="0" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="production" />
-                    <TextBox x:Name="DiffSideB" Grid.Column="2" AcceptsReturn="True" Height="110" FontFamily="{DynamicResource BFontMono}" Watermark="localhost" />
-                  </Grid>
-                  <c:JsonDiffViewer x:Name="DemoDiff" LabelA="production" LabelB="localhost" Height="320" />
+                  <!-- Galleries (TASK-761) and inputs (TASK-762): their looks. -->
+                  <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,24,8">
+                    <TextBlock Text="Gallery look:" VerticalAlignment="Center" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                    <ComboBox Name="DemoRibbonGalleryStyle" SelectedIndex="0" SelectionChanged="OnRibbonGalleryStyle">
+                      <ComboBoxItem Content="Framed" />
+                      <ComboBoxItem Content="Open" />
+                      <ComboBoxItem Content="Dropdown" />
+                    </ComboBox>
+                    <TextBlock Text="Input captions:" VerticalAlignment="Center" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                    <ComboBox Name="DemoRibbonFieldCaption" SelectedIndex="0" SelectionChanged="OnRibbonFieldCaption">
+                      <ComboBoxItem Content="None" />
+                      <ComboBoxItem Content="Beside" />
+                      <ComboBoxItem Content="Above" />
+                    </ComboBox>
+                  </StackPanel>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="Last command:" VerticalAlignment="Center" Foreground="{DynamicResource BTextSecondaryBrush}" />
+                  <TextBlock Name="DemoRibbonLastCommand" VerticalAlignment="Center" Foreground="{DynamicResource BColorPrimaryBrush}" Text="(none yet)" />
                 </StackPanel>
-              </ContentControl>
-
-              <TextBlock Text="Markdown editor" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}" Height="260"><c:MarkdownEditor x:Name="DemoMarkdown" /></ContentControl>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
-
-        <!-- ── Composites ───────────────────────────────────────────── -->
-        <TabItem Header="Composites">
-          <ScrollViewer>
-            <StackPanel Spacing="16" Margin="0,12,0,0">
-              <TextBlock Text="Expander — the b-accordion look (FEATURE-020)" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <StackPanel Spacing="8">
-                <Expander Header="Production — 31 differences" IsExpanded="True">
-                  <TextBlock Text="Items[2].Revenue: 1000 → 1007" Foreground="{DynamicResource BTextBrush}" />
-                </Expander>
-                <Expander Header="Test — equal">
-                  <TextBlock Text="No differences" Foreground="{DynamicResource BTextMutedBrush}" />
-                </Expander>
-                <Expander Header="Opens upward" ExpandDirection="Up">
-                  <TextBlock Text="The header moves below the panel." Foreground="{DynamicResource BTextBrush}" />
-                </Expander>
-                <Expander Header="Disabled section" IsEnabled="False">
-                  <TextBlock Text="Not reachable" />
-                </Expander>
               </StackPanel>
-
-              <TextBlock Text="Kanban" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <c:Kanban x:Name="DemoKanban" Height="220" />
-
-              <TextBlock Text="Chart" FontWeight="SemiBold" Foreground="{DynamicResource BTextBrush}" />
-              <ContentControl Theme="{StaticResource BCard}" Height="280"><c:BChart x:Name="DemoChart" /></ContentControl>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
-
-        <!-- ── Chrome ───────────────────────────────────────────────── -->
-        <TabItem Header="Chrome">
-          <ScrollViewer>
-            <StackPanel Spacing="12" Margin="0,12,0,0">
-              <TextBlock Text="Ribbon (BAppShell chrome)" FontWeight="SemiBold"
-                         Foreground="{DynamicResource BTextBrush}" />
-              <Border BorderThickness="1" BorderBrush="{DynamicResource BBorderBrush}"
-                      CornerRadius="{DynamicResource BRadius}">
-                <c:Ribbon x:Name="DemoRibbon" />
-              </Border>
-              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="The shell ships two chrome styles: a sidebar (ShellView) and this ribbon (RibbonShellView), both over the same ShellViewModel. Run a shell app to see them full-size; here is the ribbon control on its own." />
-              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="Resize the window to watch Office-style progressive scaling: groups degrade Medium → Small → a single ▾ button (whose flyout holds the group at full size) in priority order, so Export gives way first and Clipboard last. Clipboard is floored at Small, so it gives way only if the alternative is clipping. Narrower still, the ▾ buttons drop their names (hover for the name); narrower again the whole ribbon becomes ☰. The tab strip scrolls; the ribbon body never does." />
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Pin mode:" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextSecondaryBrush}" />
-                <Button Name="DemoRibbonPinToggle" Click="OnToggleRibbonPin" Content="Unpin the ribbon" />
-                <TextBlock Name="DemoRibbonPinState" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextMutedBrush}"
-                           Text="pinned — the body sits in the layout" />
-              </StackPanel>
-              <!-- Contextual tabs (TASK-760): "select a table" shows the Table Tools set, in the look picked here. -->
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Contextual tabs:" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextSecondaryBrush}" />
-                <CheckBox Name="DemoRibbonTableSelected" Content="A table is selected" IsCheckedChanged="OnRibbonTableSelected" />
-                <ComboBox Name="DemoRibbonContextualStyle" SelectedIndex="0" SelectionChanged="OnRibbonContextualStyle">
-                  <ComboBoxItem Content="Band" />
-                  <ComboBoxItem Content="Pill" />
-                  <ComboBoxItem Content="Edge" />
-                </ComboBox>
-              </StackPanel>
-              <!-- Galleries (TASK-761): the Styles gallery's look. -->
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Gallery look:" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextSecondaryBrush}" />
-                <ComboBox Name="DemoRibbonGalleryStyle" SelectedIndex="0" SelectionChanged="OnRibbonGalleryStyle">
-                  <ComboBoxItem Content="Framed" />
-                  <ComboBoxItem Content="Open" />
-                  <ComboBoxItem Content="Dropdown" />
-                </ComboBox>
-                <!-- Inputs (TASK-762): how Font, Size and Height are captioned. -->
-                <TextBlock Text="Input captions:" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextSecondaryBrush}" />
-                <ComboBox Name="DemoRibbonFieldCaption" SelectedIndex="0" SelectionChanged="OnRibbonFieldCaption">
-                  <ComboBoxItem Content="None" />
-                  <ComboBoxItem Content="Beside" />
-                  <ComboBoxItem Content="Above" />
-                </ComboBox>
-              </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <TextBlock Text="Last command:" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BTextSecondaryBrush}" />
-                <TextBlock Name="DemoRibbonLastCommand" VerticalAlignment="Center"
-                           Foreground="{DynamicResource BColorPrimaryBrush}" Text="(none yet)" />
-              </StackPanel>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
-
-        <!-- ── Overlays ─────────────────────────────────────────────── -->
-        <TabItem Header="Overlays">
-          <StackPanel Spacing="12" Margin="0,12,0,0">
-            <TextBlock Text="Overlays open over the whole gallery." Foreground="{DynamicResource BTextSecondaryBrush}" />
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Button Content="Open modal" Click="OnOpenModal" />
-              <Button Content="New (form modal)" Click="OnOpenFormModal" />
-              <Button Content="Open drawer" Click="OnOpenDrawer" />
-              <Button Content="Command palette (Ctrl+K)" Click="OnOpenPalette" />
-            </StackPanel>
+            </local:DemoCard>
           </StackPanel>
-        </TabItem>
 
-        <!-- ── Mobile shell ─────────────────────────────────────────── -->
-        <TabItem Header="Mobile shell">
-          <ScrollViewer>
-            <StackPanel Spacing="12" Margin="0,12,0,0">
-              <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
-                         Text="BMobileAppShell equivalent — fixed top-bar + safe-area bottom-nav driven by the module nav-model (EPIC-016 / TASK-043). Tap a bottom-nav item to switch surfaces; the active item highlights." />
+          <!-- ── Overlays ─────────────────────────────────────────────── -->
+          <StackPanel x:Name="SecOverlays" Tag="overlays" IsVisible="False">
+            <WrapPanel>
+              <local:DemoCard Title="Modal" TypeName="c:Modal" WebTwin="b-modal"
+                              About="A dialog over the dimmed window; a click on the backdrop closes it."
+                              Source="Birko.Xaml.Avalonia">
+                <Button Content="Open modal" Click="OnOpenModal" />
+              </local:DemoCard>
+              <local:DemoCard Title="Form modal" TypeName="c:FormModal" WebTwin="base-form-modal"
+                              About="A modal that holds a Form, for creating and editing a record."
+                              Source="Birko.Xaml.Avalonia">
+                <Button Content="New contact" Click="OnOpenFormModal" />
+              </local:DemoCard>
+              <local:DemoCard Title="Drawer" TypeName="c:Drawer" WebTwin="b-drawer"
+                              About="A panel that slides in from the edge of the window."
+                              Source="Birko.Xaml.Avalonia">
+                <Button Content="Open drawer" Click="OnOpenDrawer" />
+              </local:DemoCard>
+              <local:DemoCard Title="Command palette" TypeName="c:CommandPalette" WebTwin="b-command-palette"
+                              About="Ctrl+K search over the app's commands, anywhere in the window."
+                              Source="Birko.Xaml.Avalonia, fed by Birko.Xaml.Core CommandItem">
+                <Button Content="Open (Ctrl+K)" Click="OnOpenPalette" />
+              </local:DemoCard>
+            </WrapPanel>
+          </StackPanel>
+
+          <!-- ── Mobile shell ─────────────────────────────────────────── -->
+          <StackPanel x:Name="SecMobile" Tag="mobile" IsVisible="False">
+            <local:DemoCard Width="440" Title="Mobile app shell" TypeName="sv:MobileShellView" WebTwin="BMobileAppShell"
+                            About="A phone layout: a fixed top bar and a bottom navigation driven by the module list. Tap an item to switch surfaces."
+                            Source="Birko.Xaml.Shell over a Birko.Xaml.Core ShellViewModel">
               <!-- Phone-sized frame so the mobile chrome reads as a device inside the desktop gallery. -->
-              <Border Width="380" Height="640" HorizontalAlignment="Left"
+              <Border Width="380" Height="640" HorizontalAlignment="Center"
                       CornerRadius="24" ClipToBounds="True" BorderThickness="8"
                       BorderBrush="{DynamicResource BBorderBrush}"
                       Background="{DynamicResource BBgSecondaryBrush}">
                 <sv:MobileShellView x:Name="DemoMobileShell" />
               </Border>
-            </StackPanel>
-          </ScrollViewer>
-        </TabItem>
+            </local:DemoCard>
+          </StackPanel>
 
-      </TabControl>
+        </Panel>
+      </ScrollViewer>
     </DockPanel>
 
     <!-- Root-level overlays -->
+    <c:Modal x:Name="AboutModal" Title="Birko.Xaml — the desktop side of the Birko design system">
+      <StackPanel Spacing="10" MaxWidth="520">
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextBrush}"
+                   Text="Every card is a live control from Birko.Xaml.Avalonia (or an Avalonia control in the Birko look). The line under each name says what it is; ⓘ says where it comes from and which Birko.Web component it matches." />
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextBrush}"
+                   Text="Appearance switches the four themes live. They are generated from the same tokens.json as the web CSS, so a desktop app and a web app look like one product." />
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BTextSecondaryBrush}"
+                   Text="Birko.Xaml.Core holds the view models and has no Avalonia dependency; Birko.Xaml.Shell adds sidebar, ribbon and mobile shells. Help has the links to the source and the guide." />
+        <Button Content="Start exploring" Click="OnCloseAbout" HorizontalAlignment="Right" />
+      </StackPanel>
+    </c:Modal>
+
     <c:Modal x:Name="DemoModal" Title="A modal dialog">
       <TextBlock Text="Modals dim the backdrop and center a token-styled card. Click the backdrop to close."
                  TextWrapping="Wrap" Foreground="{DynamicResource BTextBrush}" />

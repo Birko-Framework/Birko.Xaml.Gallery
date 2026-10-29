@@ -18,6 +18,9 @@
     <PackageReference Include="Avalonia.Desktop" Version="11.*" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.*" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.*" />
+    <!-- The screenshots mode renders the gallery without a display, for CI (TASK-783). -->
+    <PackageReference Include="Avalonia.Headless" Version="11.*" />
+    <PackageReference Include="Avalonia.Skia" Version="11.*" />
   </ItemGroup>
 
   <!-- Consumer app: references the framework assemblies across the bucket boundary

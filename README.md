@@ -1,27 +1,51 @@
 # Birko.Xaml.Gallery
 
-A tiny runnable Avalonia desktop app that renders the first Birko restyled controls across all four
-themes. It's the **STORY-031 go/no-go gate** for EPIC-015: a dev/validation artifact (mirroring how
-the Birko.Web Playground validated components), **not** a shipped consumer.
+The Birko design system on the desktop: every Birko.Xaml control, live, in all four themes — the Avalonia counterpart
+of the [Birko.Web Playground](https://birko-framework.github.io/Birko.Web.Playground/). It began as the STORY-031
+go/no-go gate for EPIC-015 and is still a validation artifact, **not** a shipped consumer.
 
-## Run it
+![The Controls section in the light theme](https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest/download/gallery-light-controls.png)
+
+## Download
+
+Built on every push to `main` and published as the [latest release](https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest) — self-contained, no .NET install needed:
+
+| System | Download |
+|---|---|
+| Windows x64 | [Birko.Xaml.Gallery-win-x64.zip](https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest/download/Birko.Xaml.Gallery-win-x64.zip) — unzip, run `Birko.Xaml.Gallery.exe` |
+| Linux x64 | [Birko.Xaml.Gallery-linux-x64.tar.gz](https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest/download/Birko.Xaml.Gallery-linux-x64.tar.gz) — `tar -xzf`, run `./Birko.Xaml.Gallery/Birko.Xaml.Gallery` |
+| macOS (Apple Silicon) | [Birko.Xaml.Gallery-osx-arm64.zip](https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest/download/Birko.Xaml.Gallery-osx-arm64.zip) — unzip, then `xattr -dr com.apple.quarantine Birko.Xaml.Gallery && ./Birko.Xaml.Gallery/Birko.Xaml.Gallery` |
+
+The builds are not code-signed: Windows SmartScreen asks once ("More info → Run anyway"), and macOS needs the
+quarantine flag cleared as shown.
+
+## Run it from source
 
 ```bash
 dotnet run --project Birko.Xaml.Gallery
 ```
 
-Click **Light / Dark / Neon / Finstat** — the Button, TextBox, Card and Badge re-theme live via
-`RequestedThemeVariant` (no restart). Colors, corner radius and typography all come from the design
-tokens shared byte-for-byte with Birko.Web.
+It references `Birko.Xaml.*` at `../../Framework/`, so check it out in the `Birko/Consumers` + `Birko/Framework` layout.
 
 ## What it shows
 
-Organized into `TabControl` sections (which also dogfoods `b-tabs`):
-- **Controls** — buttons, badge/tag, input, combobox, checkbox/radio/toggle, progress + spinner, dropdown menu, breadcrumb (clickable crumbs — links write to a status line, last is the current location), tooltip.
-- **Forms & data** — schema-driven `Form`, `DataGrid`, `TreeView`.
-- **Viewers** — `ObjectTree` (JSON), `XmlViewer`, `MarkdownEditor`.
-- **Composites** — `Kanban`, `BChart` (LiveCharts2).
-- **Overlays** — buttons that open the `Modal`, `FormModal`, `Drawer`, and the `CommandPalette` (also **Ctrl+K**), hosted at the window root.
+The header is Birko's own `Ribbon` (TASK-783), as on the web Playground:
+
+- **Gallery** picks a section — Controls, Forms & data, Viewers, Composites, Chrome (the ribbon on its own, with its
+  looks to try), Overlays, Mobile shell.
+- **Appearance** switches the four themes live (Light, Dark, Neon, Finstat), generated from the same `tokens.json` as the
+  web CSS.
+- **Help** opens About and the links: source, guide, the web gallery, downloads.
+
+Every control sits in a card that says what it is; **ⓘ** says where it comes from (a Birko control, or an Avalonia one
+in the Birko look), how it is written in AXAML, and which Birko.Web component it matches.
+
+## Screenshots
+
+`Birko.Xaml.Gallery --screenshots <dir>` renders every section headlessly (Skia, no display) in the light theme, plus
+Controls and Viewers in the other three, and exits. CI runs it on every push and attaches the PNGs to the latest
+release, so the wiki and https://birko-framework.github.io/ always show the current build:
+`https://github.com/Birko-Framework/Birko.Xaml.Gallery/releases/latest/download/gallery-<theme>-<section>.png`.
 
 ## What it validates
 
