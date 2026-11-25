@@ -330,8 +330,13 @@ public partial class GalleryView : UserControl
         };
         static RibbonItem WithMenu(RibbonItem i, bool split, params RibbonMenuEntry[] menu) => new()
         {
-            Id = i.Id, Label = i.Label, Icon = i.Icon, Description = i.Description, Shortcut = i.Shortcut, Run = i.Run,
+            Id = i.Id, Label = i.Label, Icon = i.Icon, Description = i.Description, Shortcut = i.Shortcut, Run = i.Run, Size = i.Size,
             Menu = menu, Split = split,
+        };
+        // An item's own size (Birko TASK-120 / 122): an anchor, kept as an offset from its group as the group degrades.
+        static RibbonItem Sized(RibbonItem i, RibbonGroupSize size) => new()
+        {
+            Id = i.Id, Label = i.Label, Icon = i.Icon, Description = i.Description, Shortcut = i.Shortcut, Run = i.Run, Size = size,
         };
 
         // Deliberately dense — an Office-sized ribbon (8 tabs, and 6 groups on the active tab), so the
@@ -365,11 +370,13 @@ public partial class GalleryView : UserControl
                     Items = new[]
                     {
                         // A split button: Paste pastes, its ▾ opens the menu (TASK-755), as in the web Playground.
-                        WithMenu(I("Paste", "📋", "Add content from the clipboard.", "Ctrl+V"), split: true,
+                        // Large: Word's big Paste beside the stacked rest (Birko TASK-122), as in the web Playground.
+                        WithMenu(Sized(I("Paste", "📋", "Add content from the clipboard.", "Ctrl+V"), RibbonGroupSize.Large), split: true,
                             Choice("Paste as text", "📝", "Ctrl+Shift+V"), Choice("Paste as picture", "🖼"),
                             RibbonMenuEntry.Separator, Choice("Paste special…", null, "Ctrl+Alt+V")),
                         I("Cut", "✂", "Remove the selection and put it on the clipboard.", "Ctrl+X"),
                         I("Copy", "🗐", "Put a copy of the selection on the clipboard.", "Ctrl+C"),
+                        I("Format Painter", "🖌", "Copy the formatting of the selection to another place.", "Ctrl+Shift+C"),
                     } },
                 new RibbonGroup { Label = "Records", Icon = "🗃", ScalingPriority = 80,
                     Items = new[] { I("New", "➕"), I("Delete", "🗑"), I("Duplicate", "⧉") } },
